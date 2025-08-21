@@ -1,0 +1,47 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    
+}
+
+input {
+    border: none;
+
+
+}
+
+select {
+    border: none;
+}
+
+table {
+    font-size: 15px;
+    margin: 2px;
+    
+}
+
+p {
+    font-size: 15px;
+}
+
+@media print {
+    @page {
+        size: 21cm 13.5cm;
+        margin: 5mm;
+        margin-top: 0;
+        padding-bottom: 0;
+
+    }
+    body {
+        font-size: 8px
+        
+      }
+    .bianlan {
+        font-size: 5px;
+    }
+    table {
+        font-size: 13px;
+    }
+}
+

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" media="print" href="../static/css/print.css">
+    <link rel="stylesheet" href="../static/css/base.css">
+    <title>金恒晟新材料科技有限公司</title>
+    
+</head>
+<body class="d-flex flex-column justify-content-center bg-light">
+
+    {% include "nav.html" %}
+    {% block input %}{% endblock %}
+    {% block container %}{% endblock %}
+    {% block map %}{% endblock %}
+
+
+    <script src="../static/js/datatables.js"></script>
+
+</body>
+</html>

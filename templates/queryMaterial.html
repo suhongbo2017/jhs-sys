@@ -1,0 +1,55 @@
+{% include "base.html" %}
+{% block input %}
+<div class="queryInputContianer d-flex justify-content-center m-2 gap-2">
+    <form action="/queryMaterial" method="post" class=" gap-2">
+        <div class="row">
+            
+            <p class="col"><mark>金恒晟</mark>查询方式：单查询为直接输入。多项查询为多查询中间用“/”分隔。例如：查询240G的硬盘."硬盘/240"</p>
+            <input type="text" placeholder="输入要查询的物料名称" id="material" name="material" required>
+            <button type="submit" class="btn btn-primary">查询数据</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block container %}
+<div class="container d-print-none fs-6 bg-white" id="showContent">
+    <table id="myTable" class="display">
+        <thead>
+            <tr>
+                <th>物料名称</th>
+                <th>规格型号</th>
+                <th>物料代码</th>
+                <th>短代码</th>
+                <th>内码</th>
+
+            </tr>
+        </thead>
+        <tbody class="tableBody">
+            {% for i,d in datas %}
+            <tr>
+                <!-- <td >{{ d['ID'] }}</td> -->
+                <td >{{ d['物料名称'] }}</td>
+                <td >{{ d['规格型号'] }}</td>
+                <td >{{ d['物料代码'] }}</td>
+                <td >{{ d['短代码'] }}</td>
+                <td >{{ d['内码'] }}</td>
+                <!-- <td >平方米</td>
+                <td >{{ d['数量'] }}</td>
+                <td >{{ d['备注'] }}</td> -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- <h2 class="text-danger">{{ data }}</h2> -->
+</div> 
+
+
+
+
+<!-- <script src="../static/js/datatables.js"></script>
+
+{% endblock %}
+{% block map %}{% endblock %}

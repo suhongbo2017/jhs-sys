@@ -1,0 +1,120 @@
+{% include 'base.html' %}
+{% block input %}
+{% endblock %}
+
+{% block queryRow %}
+
+<!-- 查询提交区域 -->
+<form action="#" method="post" class="d-flex  m-3 flex-row justify-content-center d-print-none">
+    <div class="row">
+        <div class="d-flex ">
+            <h1 class="h2" id="code" value="1">九茂模板</h1>
+            <input type="text" class="form-control m-3 text-dark bg-primary bg-opacity-25"  placeholder="请输入送货单号" name="inputEntry" id="inputEntry">
+                     
+                <button type="submit" class="btn btn-primary m-3 ">提交查询</button>
+                <!-- ID:printTable触发print.js中的打印功能 -->
+                <button class="btn btn-primary m-3 " id="printTable">打印单据</button>
+
+        </div>
+        
+    </div>
+</form>
+
+{% endblock %}
+{% block container %}
+
+{% endblock %}
+<!-- 下方是打印区域 -->
+{% block map %}
+<div class="container mt-2  lh-1" id="printContent">
+
+    <!-- 打印区域-表头部分 -->
+    <div class="d-flex flex-column fs-6 ">
+        <!-- title -->
+        <div class="title d-flex mt-2  flex-row justify-content-center text-align-end">
+            <h4>送货单</h4>
+        </div>
+        <br>
+        <!-- 单号与日期 -->
+        <div class="d-flex flex-row justify-content-end">
+            <p>入库单号：_______________</p>
+        </div>
+        <div class="d-flex flex-row justify-content-between">
+            <p>收货方:东莞九茂电子科技有限公司</p>
+            <p>送货单号: <input type="text" class="bg-primary bg-opacity-25 border-0" style="width: 100px;" value="{{ data }}"></p>
+            <!-- <p>收货地址:深圳市龙岗区龙岗街道同乐社区同力路68号东部影视城2号厂房</p> -->
+        </div>
+        <!-- 地址 -->
+        <div class="d-flex flex-row justify-content-between">
+            <p>供货方:H0047</p>
+            <p>送货日期: <input type="date" name="" id="" class="border-0"></p>
+            <!-- <p>电话:0769-83509999</p> -->
+        </div>
+        <!-- 客户信息 -->
+    </div>
+
+    <!-- 打印区域-表体 -->
+    <table class="table table-sm table-hover table-bordered border-dark mt-1 fs-9" id="tbody">
+        <!-- 列名 -->
+        <thead>
+            <tr>
+                <!-- <th class=" d-print-none">ID</th> -->
+                <th class="th1">序号</th>
+                <th class="th1">客户订单号</th>
+                <th class="th2">客户品号</th>
+                <th class="th3">客户品名</th>
+                <th class="th4">宽(mm)</th>
+                <th class="th5">长(M)</th>
+                <th class="th6">支(R)</th>
+                <th class="th7" style="width: 40px;">单位</th>
+                <th class="th8">数量</th>
+                <th class="th8">生产日期</th>
+                <th class="th8">批号</th>
+                <!-- <th class="d-print-none">操作</th> -->
+            </tr>
+        </thead>
+        <!-- 内容区域：使用flask的for循环对传入的数据进行打印 -->
+        <tbody>           
+            {% for d,i in table %}
+            <tr class="align-bottom">
+                <!-- <td class="d-print-none">{{ d['ID'] }}</td> -->
+                <td >{{ i['index']+1 }}</td>
+                <td >{{ i['客户订单号'] }}</td>
+                <td class="text-wrap" style="width: 4rem;">{{ i['客户品号'] }}</td>
+                <td >{{ i['客户品名'] }}</td>
+                <td >{{ i['宽'] }}</td>
+                <td >{{ i['长'] }}</td>
+                <td >{{ i['支'] }}</td>
+                <td >平方米</td>
+                <td >{{ i['数量'] }}</td>
+                <td ><input type="text" placeholder="生产日期" class="border-0"></td>
+                <td >{{ i['批号'] }}</td>
+                <!-- <td id="td10"><button class="btn btn-primary d-print-none" >修改</button></td> -->
+            </tr>
+            {% endfor %}  
+
+        </tbody>
+    </table>
+    <!-- 打印区域-表尾 -->
+    <div class="mt-3 d-flex flex-column lh-3">
+    </div>
+        <div class="d-flex justify-content-between">
+            <label class="row">收货人签章:________________</label>
+            <label class="row">运送人签章:________________</label>
+            <label class="row">制单人签章:________________</label>
+            
+        </div>
+        <br>
+        <div class="d-flex justify-content-between">
+            
+            <label class="row">收货日期:________________</label>
+            <label class="row">运送日期:________________</label>
+            <label class="row">制单日期 :________________</label>
+        </div>
+</div>
+{% endblock %}
+
+
+
+
+<script src="../static/js/print.js"></script>

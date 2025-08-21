@@ -1,0 +1,39 @@
+{% include 'base.html' %}
+{% block input %}
+{% endblock %}
+
+{% block queryRow %}
+<div class="d-flex flex-column align-items-center mt-5">
+    <div class="inputDate ">
+        <form action="#" method="post" class="d-flex flex-column align-items-center">
+            <textarea name="translate" id="translate" cols="150" rows="10" placeholder="输入要翻译的文本">{{ strs }}</textarea>
+            <select name="lang" id="lang" style="width: 100px; height: 30px;background: rgb(185, 185, 247);color: rgb(14, 14, 14);font-family: '黑体';">
+                <option value="ZH">英译中</option>
+                <option value="EN">中译英</option>
+            </select>
+            <button type="submit" style="width: 200px;" class="btn btn-primary">翻译</button>
+        </form>
+    </div>
+    <div class="lang bg-primary m-auto " >
+    </div>
+    <div class="showDate">
+        <textarea name="showDate" id="showDate" cols="150" rows="10">{{ datas }} </textarea>
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block container %}
+
+
+{% endblock %}
+<!-- 下方是打印区域 -->
+{% block map %}
+
+{% endblock %}
+
+
+
+
+<script src="../static/js/print.js"></script>

@@ -1,0 +1,385 @@
+{% include 'base.html' %}
+{% block input %}
+{% endblock %}
+
+{% block queryRow %}
+<!-- 查询提交区域 -->
+<form action="{{ url_for('fengzhenchang') }}" method="post" class="d-flex m-3 flex-row justify-content-center d-print-none">
+    <div class="row">
+        <div class="d-flex align-items-center">
+            <h3 class="h3 mb-0">丰正昌</h3>
+            <div class="ms-3">
+                <input type="text" class="form-control text-dark bg-primary bg-opacity-25" 
+                       placeholder="请输入送货单号" name="inputEntry" id="inputEntry" 
+                       value="{{ data if data }}" autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-primary ms-3">提交查询</button>
+            <button type="button" class="btn btn-primary ms-3" id="printTable">打印单据</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block head %}
+<style>
+    /* A5 纸张设置 */
+    @page {
+        size: 210mm 148mm landscape;  /* A5 横向 */
+        margin: 0;
+    }
+
+    /* 预览容器样式 */
+    .preview-container {
+        width: 210mm;
+        height: 148mm;
+        margin: 20px auto;
+        background: white;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* 打印内容基础样式 */
+    #printContent {
+        width: 210mm;
+        height: 148mm;
+        padding: 8mm;
+        box-sizing: border-box;
+    }
+
+    /* 表格基础样式 */
+    .print-table {
+        width: 194mm;
+        border-collapse: collapse;
+        table-layout: fixed;
+        border: 1px solid #000;
+    }
+
+    /* 表格列宽设置 - 调整以适应内容 */
+    .print-table th:nth-child(1) { width: 15px; }     /* 序号 */
+    .print-table th:nth-child(2) { width: 45px; }     /* 采购单号 */
+    .print-table th:nth-child(3) { width: 45px; }     /* TTY新料号 */
+    .print-table th:nth-child(4) { width: 140px; }    /* 产品名称 */
+    .print-table th:nth-child(5) { width: 80px; }     /* 产品规格 */
+    .print-table th:nth-child(6) { width: 30px; }     /* 送货数量 */
+    .print-table th:nth-child(7) { width: 20px; }     /* 单位 */
+    .print-table th:nth-child(8) { width: 40px; }     /* 生产日期 */
+    .print-table th:nth-child(9) { width: 25px; }     /* 备注 */
+
+    /* 表格单元格基础样式 */
+    .print-table th,
+    .print-table td {
+        border: 1px solid #000;
+        padding: 1mm;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 7.5pt;        /* 缩小字体 */
+        line-height: 1.1;
+        white-space: normal;     /* 允许换行 */
+        word-break: break-all;   /* 允许在任意字符间断行 */
+        overflow: visible;       /* 确保内容可见 */
+    }
+
+    /* 产品名称列样式 */
+    .product-name-cell {
+        min-height: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0.5mm 0;
+    }
+
+    .product-name-cell > div {
+        font-size: 7.5pt;       /* 缩小字体 */
+        line-height: 1.1;
+        margin: 0.5mm 0;
+        width: 100%;
+        text-align: center;
+        word-break: break-all;
+    }
+
+    .product-name-cell input {
+        width: 95%;
+        font-size: 7.5pt;       /* 缩小字体 */
+        height: 12px;           /* 减小输入框高度 */
+        border: none;
+        text-align: center;
+        padding: 0;
+        background: transparent;
+    }
+
+    /* 备注列文本框 */
+    textarea {
+        width: 100%;
+        height: 40px;
+        font-size: 7.5pt;       /* 缩小字体 */
+        border: none;
+        resize: none;
+        padding: 0;
+        text-align: center;
+        background: transparent;
+    }
+
+    /* 打印样式 */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .preview-container,
+        .preview-container * {
+            visibility: visible;
+        }
+
+        .preview-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            margin: 0;
+            box-shadow: none;
+        }
+
+        /* 标题样式 */
+        h4.fw-bold {
+            font-size: 12pt;
+            margin-bottom: 2mm !important;
+        }
+
+        .print-title {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 4mm;
+        }
+
+        /* 表头信息样式 */
+        .print-header {
+            font-size: 8.5pt;
+            line-height: 1.2;
+            margin-bottom: 4mm;
+        }
+
+        .print-header .label {
+            font-weight: 500;
+            margin-right: 1.5mm;
+        }
+
+        /* 表格样式 */
+        .print-table th {
+            font-size: 8.5pt;
+            padding: 0.8mm;
+            font-weight: normal;
+        }
+
+        .print-table td {
+            font-size: 8pt;
+            padding: 0.8mm;
+            line-height: 1.1;
+        }
+
+        /* 打印时的表格样式 */
+        .print-table th,
+        .print-table td {
+            font-size: 7.5pt !important;  /* 确保打印时字体大小一致 */
+            padding: 1mm !important;
+            border: 1px solid #000 !important;
+        }
+
+        /* 表头样式 */
+        .print-table th {
+            font-weight: normal;
+            background-color: #f8f9fa !important;
+        }
+
+        /* 确保内容不会被截断 */
+        .print-table td > * {
+            max-width: 100%;
+            overflow: visible;
+        }
+
+        /* 表尾样式 */
+        .print-footer {
+            margin-top: 6mm;
+        }
+
+        .print-footer .signature-area {
+            font-size: 8.5pt;
+            margin-bottom: 4mm;
+        }
+
+        .print-footer .copy-info {
+            font-size: 7.5pt;
+            color: #333;
+        }
+
+        /* 输入框和文本框样式 */
+        input, textarea {
+            font-size: 8pt !important;
+        }
+
+        /* 右侧信息输入框 */
+        .col-6.text-end input {
+            font-size: 8.5pt;
+            height: 14px;
+        }
+
+        /* 打印时的表格样式 */
+        .table {
+            width: 194mm !important;
+            border: 1px solid #000 !important;
+        }
+
+        /* 表头文字样式 */
+        .fw-bold {
+            font-size: 14pt;
+            margin-bottom: 4mm;
+        }
+
+        /* 表头信息样式 */
+        .mb-2 {
+            font-size: 8.5pt;
+            margin-bottom: 1.5mm !important;
+        }
+
+        /* 表格边框和内容 */
+        .table th,
+        .table td {
+            border: 1px solid #000 !important;
+            font-size: 8.5pt;
+            padding: 1.5mm;
+        }
+
+        /* 确保打印时边框显示 */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* 表格线条样式 */
+        .print-table th,
+        .print-table td {
+            position: relative;
+        }
+
+        /* 加深边框颜色 */
+        .print-table th {
+            background-color: #f8f9fa !important;
+            border-bottom: 1.5pt solid #000 !important;
+        }
+
+        /* 调整输入框和文本框，避免遮挡边框 */
+        .print-table input,
+        .print-table textarea {
+            margin: 0;
+            border: none;
+            background: transparent;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block map %}
+<div class="preview-container">
+    <div id="printContent">
+        <!-- 标题 -->
+        <div class="text-center">
+            <h4 class="fw-bold mb-2">东莞市金恒晟新材料科技有限公司</h4>
+            <h3 class="fw-bold">送货单</h3>
+        </div>
+
+        <!-- 表头信息 -->
+        <div class="row print-header">
+            <!-- 左侧信息 -->
+            <div class="col-6">
+                <div><span class="label">客户名称：</span>深圳市丰正昌精密科技有限公司</div>
+                <div><span class="label">收货人：</span>劳先生</div>
+                <div><span class="label">联系电话：</span>13324774228</div>
+            </div>
+            <!-- 右侧信息 -->
+            <div class="col-6 text-end">
+                <div>
+                    <span class="label">送货单号：</span>
+                    <input type="text" value="{{ data if data }}" readonly>
+                </div>
+                <div>
+                    <span class="label">送货日期：</span>
+                    <input type="date">
+                </div>
+            </div>
+            <!-- 收货地址（单行显示） -->
+            <div class="col-12">
+                <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <span class="label">收货地址：</span>深圳市宝安区福海街道新和社区欧联路28号科聚通工业园C栋四楼
+                </div>
+            </div>
+        </div>
+
+        <!-- 表格 -->
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>序</th>
+                    <th>采购单号</th>
+                    <th>料号</th>
+                    <th>产品名称</th>
+                    <th>产品规格</th>
+                    <th>送货数量</th>
+                    <th>单位</th>
+                    <th>生产批号</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if table %}
+                    {% for index, row in table %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ row['采购订单'] }}</td>
+                        <td>{{ row['TTY新料号'] }}</td>
+                        <td>
+                            <div class="product-name-cell">
+                                <div>{{ row['产品名称'] }}</div>
+                                <input type="text" value="{{ row['规格'] }}">
+                                <div>{{ row['型号'] }}</div>
+                            </div>
+                        </td>
+                        <td>{{ row['宽']|string + 'MM *' + row['长']|string + 'M *' + row['支']|string + 'R'}}</td>
+                        <td>{{ row['数量'] }}</td>
+                        <td>m²</td>
+                        <td>{{ row['批号'] }}</td>
+                        <td><textarea></textarea></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- 表尾 -->
+        <div class="print-footer">
+            <!-- 签章区域 -->
+            <div class="row signature-area">
+                <div class="col-4">
+                    <span class="label">制单：</span>
+                    <span class="label">签章</span>
+                </div>
+                <div class="col-4"></div>
+                <div class="col-4 text-end">
+                    <span class="label">客户签收：</span>
+                    <span class="label">盖章</span>
+                </div>
+            </div>
+            <!-- 联次说明 -->
+            <div class="row copy-info">
+                <div class="col-12 d-flex justify-content-between">
+                    <span>第一联：白色（存根）</span>
+                    <span>第二联：红色（财务）</span>
+                    <span>第三联：绿色</span>
+                    <span>第四联：黄色（仓库）</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/print.js') }}"></script>
+{% endblock %}

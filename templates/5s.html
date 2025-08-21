@@ -1,0 +1,210 @@
+{% include 'base.html' %}
+{% block input %}
+<style>
+    input {
+        
+        transition: all 1s;
+    }
+    input:hover {
+        background-color: #a4fac1;
+        transition: all 1s;
+    }
+</style>
+<div class="container d-flex flex-column align-items-center mt-3" >
+    <h1>5S检查汇总</h1>
+    
+</div>
+{% endblock %}
+
+{% block queryRow %}
+<div class="inputarea " style="background-color: rgb(248, 235, 216);">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        添加数据
+    </button>
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">5S检查汇总</h4><button>&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" class="d-flex flex-column" method="post">
+                        <div class="row1 d-flex justify-content-between border m-2 ">
+                            <label for="checkDate">检查日期</label>
+                            <input type="date" name="checkDate" id="checkDate">
+                            <label for="matter">待整改事项</label>
+                            <input type="text" name="matter" id="matter">
+                            <label for="department">责任部门</label>
+                            <select name="department" id="department">
+                                <option value="ft">分条部</option>
+                                <option value="tb">生产车间</option>
+                                <option value="sb">设备部</option>
+                                <option value="xz">行政部</option>
+                                <option value="yz">业助部</option>
+                                <option value="yw">业务部</option>
+                                <option value="cg">采购部</option>
+                                <option value="yf">研发部</option>
+                                <option value="ck">仓库</option>
+                                <option value="lsm">铝塑膜</option>
+                
+                            </select>
+                            <label for="principal">负责人</label>
+                            <input type="text" name="principal" id="principal">
+                            <label for="level">等级</label>
+                            <select name="level" id="level" >
+                                <option value="normal" style="background-color: green;">普通</option>
+                                <option value="yellow" style="background-color: yellow;">紧急</option>
+                                <option value="red" style="background-color: red;">非常紧急</option>
+                            </select>
+                            <label for="befor">整改前照片</label>
+                            <input type="file" name="befor" id="befor">
+                            <button type="submit" style="width: 100px;">提交</button>
+                        </div>
+                        <div class="row2 d-flex justify-content-between m-2 border">
+                            <label for="after">整改后照片</label>
+                            <input type="file" name="after" id="after">
+                            <label for="acceptor">验收人</label>
+                            <input type="text" name="acceptor" id="acceptor">
+                            <label for="acceptorDate">验收日期</label>
+                            <input type="text" name="acceptorDate" id="acceptorDate">
+                            <label for="remark">备注</label>
+                            <input type="text" name="remark" id="remark">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block container %}
+<div class="tablecontainer">
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>检查日期</th>
+                <th>整改事项</th>
+                <th>责任部门</th>
+                <th>负责人</th>
+                <th>等级</th>
+                <th>整改措施</th>
+                <th>完成日期</th>
+                <th>整改前照片</th>
+                <th>整改后照片</th>
+                <th>验收人</th>
+                <th>验收日期</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+<!-- 下方是打印区域 -->
+{% block map %}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="m-auto text-center">
+                <form action="#" class="d-flex flex-column" method="post">
+                    <div class="row1 d-flex justify-content-between border  text-center">
+                        <div>
+                            <label for="checkDate">检查日期</label>
+                            <input type="date" name="checkDate" id="checkDate">
+                        </div>
+                        <div>
+                            <label for="matter">待整改事项</label>
+                            <textarea name="matter" id="matter" cols="50" rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label for="department">责任部门</label>
+                            <select name="department" id="department">
+                                <option value="ft">分条部</option>
+                                <option value="tb">生产车间</option>
+                                <option value="sb">设备部</option>
+                                <option value="xz">行政部</option>
+                                <option value="yz">业助部</option>
+                                <option value="yw">业务部</option>
+                                <option value="cg">采购部</option>
+                                <option value="yf">研发部</option>
+                                <option value="ck">仓库</option>
+                                <option value="lsm">铝塑膜</option>
+                
+                            </select>
+                        </div>
+                        <div>
+                            <label for="principal">负责人</label>
+                            <input type="text" name="principal" id="principal">
+                        </div>
+                        <div>
+                            <label for="level">等级</label>
+                            <select name="level" id="level" >
+                                <option value="normal" style="background-color: green;">普通</option>
+                                <option value="yellow" style="background-color: yellow;">紧急</option>
+                                <option value="red" style="background-color: red;">非常紧急</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="befor">整改前照片</label>
+                            <input type="file" name="befor" id="befor">
+                        </div>
+                    </div>
+                    <div class="row2 d-flex justify-content-between border">
+                        <div>
+                            <label for="after">整改后照片</label>
+                            <input type="file" name="after" id="after">
+                        </div>
+                        <div>
+                            <label for="acceptor">验收人</label>
+                            <input type="text" name="acceptor" id="acceptor">
+                        </div>
+                        <label for="acceptorDate">验收日期</label>
+                        <input type="text" name="acceptorDate" id="acceptorDate">
+                        <label for="remark">备注</label>
+                        <input type="text" name="remark" id="remark">
+                    </div>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+<script src="../static/js/print.js"></script>
+<script>
+
+</script>

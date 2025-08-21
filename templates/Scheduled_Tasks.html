@@ -1,0 +1,55 @@
+{% include 'base.html' %}
+{% block input %}
+{% endblock %}
+
+{% block queryRow %}
+<div class="d-flex  justify-content-center">
+    <div class="row">
+        <div class="col" >
+            <h1 class="">金恒晟新材料科技有限公司</h1>
+        </div>
+
+    </div>
+    
+</div>
+
+
+
+{% endblock %}
+{% block container %}
+
+
+{% endblock %}
+<!-- 下方是打印区域 -->
+{% block map %}
+<div >
+    <div class="container-fluid d-print-none fs-6 bg-white table-responsive" id="showContent" >
+        <table id="myTable" class="table border display nowrap cell-border" >
+            <thead>
+                <tr>
+                    {% for col in column_names %}
+                    <th style="white-space:nowrap ">{{ col }}</th>              
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody class="tableBody border" style="overflow-x: auto;">
+                {% for i,td in datas %}
+                <tr>
+                    {% for k,v in td.items() %}
+                    <td >{{ v }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+        
+    
+    </div> 
+</div>
+{% endblock %}
+
+
+
+
+<script src="../static/js/print.js"></script>

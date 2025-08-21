@@ -1,0 +1,157 @@
+{% include 'base.html' %}
+{% block input %}
+{% endblock %}
+
+{% block queryRow %}
+
+<!-- 查询提交区域 -->
+<form action="#" method="post" class="d-flex  m-3 flex-row justify-content-center d-print-none">
+    <div class="row">
+        <div class="d-flex text-align-center">
+            <h1 class="h2 " style="width: 150px;">千吉模板</h1>
+            <input type="text" class="form-control m-3 text-dark bg-primary bg-opacity-25"  placeholder="可以使用“/”对单号进行拼接" name="inputEntry" id="inputEntry">
+                     
+                <button type="submit" class="btn btn-primary m-3 ">提交查询</button>
+                <!-- ID:printTable触发print.js中的打印功能 -->
+                <button class="btn btn-primary m-3 " id="printTable">打印单据</button>
+
+        </div>
+        
+    </div>
+</form>
+
+{% endblock %}
+{% block container %}
+
+
+{% endblock %}
+<!-- 下方是打印区域 -->
+{% block map %}
+<div class="container-fluid position-relative">
+
+    <!-- 打印区域-表头部分 -->
+    <div class="d-flex flex-column m-2">
+        <!-- title -->
+        <div class="row align-self-center">
+            <div class="col lh-1">
+                <h4>东莞市金恒晟新材料科技有限公司</h4>
+            </div>
+        </div>
+        <div class="row align-self-center m-0 mt-0">
+            <div class="col lh-1">
+                <small>地址:东莞市谢岗镇谢曹路798号</small>
+            </div>
+        </div>
+        <div class="row align-self-center m-0">
+            <div class="col">
+                <p>联系人: 倪中意 电话：18118789006</p>
+            </div>
+        </div>
+        
+        <br>
+        <!-- 单号与日期 -->
+        <div class="row align-items-center mt-0">
+            <div class="col-4 align-self-start">
+                <p></p>
+
+            </div>
+            <div class="col-4 align-self-center text-center  ">
+                <h4>送  货  单</h4>
+
+            </div>
+            <div class="col-4 align-self-end text-end">
+
+                <p>送货单号: <input type="text" class="bg-primary bg-opacity-25 border-0" style="width: 100px;" value="{{ data }}"></p>
+            </div>
+        </div>
+        <!-- 地址 -->
+        <div class="row">
+
+        </div>
+        <!-- 客户信息 -->
+        <div class="row">
+            <div class="col-6 align-self-start text-start">
+
+                <p >客户名称:东莞市千吉科技有限公司</p>
+            </div>
+            <div class="col text-end">               
+                <p>送货日期: <input type="date" name="" id="" class="border-0"></p>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- 打印区域-表体 -->
+    <table class="table  table-bordered border-dark mt-0 fs-9 position-relative bottom-0 mb-0 align-middle" id="tbody" style="font-size: 12px;">
+        <!-- 列名 -->
+        <thead>
+            <tr>
+                <!-- <th class=" d-print-none">ID</th> -->
+                <th class="th1">订单编号</th>
+                <th class="th2" >供应商代码</th>
+                <th class="th3">物料编码</th>
+                <th class="th4">规格</th>
+                <th class="th5">单位</th>
+                <th class="th6">数量</th>
+                <th class="th7">生产批号</th>
+                <th class="th8">备注</th>
+                <!-- <th class="d-print-none">操作</th> -->
+            </tr>
+        </thead>
+        <!-- 内容区域：使用flask的for循环对传入的数据进行打印 -->
+        <tbody>           
+            {% for d,i in table %}
+            <tr class="align-middle">
+                <!-- <td class="d-print-none">{{ d['ID'] }}</td> -->
+                <td >{{ i['订单号'] }}</td>
+                <td >S0001</td>
+                <td >{{ i['料号'] }}</td>
+                <td ><textarea name="" id="" cols="40" rows="2" class="border-0">{{i['物料名称']}}</textarea></td>
+                <!-- <td class="text-wrap" style="width: 4rem;">3{{ i['整支规格'] }}</td> -->
+                <td >平方米</td>
+                <td >{{ i['数量'] }}</td>
+                <td >{{ i['批次号'] }}</td>
+                <td ><textarea name="" id="" cols="14" rows="2" class="border-0"></textarea></td>
+                <!-- <td id="td10"><button class="btn btn-primary d-print-none" >修改</button></td> -->
+            </tr>
+            
+        </tbody>
+        
+    </table>
+    <div class=" d-flex align-items-center border border-top-0 border-dark mb-2 m-0 position-relative top-0 justify-content-center " style="font-size: 12px;height: 35px;">
+        <div>分切规格：</div><textarea name="" id="" cols="70" rows="1" class="border-0 text-start " style="font-size: 12px;">{{ i['整支规格'] }}</textarea>
+        <!-- <div>分切规格：<textarea name="" id="" cols="90" rows="1" class="border-0 text-item-center">{{ i['整支规格'] }}</textarea></div> -->
+        
+        <!-- <p class="col text-start">{{ i['整支规格'] }} </p> -->
+    </div>
+    
+    {% endfor %}
+    <!-- 打印区域-表尾 -->
+    <div class="mt-3 d-flex flex-row justify-content-between">
+        <label>送货单位签收人:________________</label>
+        <label>收货单位签收人:________________</label>
+    </div>
+    <br>
+    <div class="container " style="font-size: 12px;">
+        <div class="row justify-content-center mt-0 pb-0">
+            <p class="col-2">备注：</p>
+            <div class="col-9 text-start">1，请收货人签收和盖单位章</div>
+            <!-- <p class="text-start mb-0 col align-self-center"></p> -->
+            <p class="col-7 text-start">2，收货方如发现质量等问题，必须及时邮件或者电话沟通，并商定解决</p>
+            <p class="col-7 text-start">3，请收货后按双方约定的付款方式付货款</p>
+            <div class="row text-center">
+                <p class="col">一、回签（白）</p>
+                <p class="col"> 二、客户（红）</p>
+                <p class="col">三、仓库（蓝色）</p>
+                <p class="col">四、客户（绿色）</p>
+                <p class="col">五、客户（黄）</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+<script src="../static/js/print.js"></script>

@@ -1,0 +1,189 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+
+.container {
+    padding: 3px;
+    margin: 5px;
+    margin-top: 0px;
+    width: 1000px;
+    height: 500px;
+    background-color: #ffffff;
+    font-family: 宋体;
+    font-size: 18px;
+    display: grid;
+    grid-template-columns: 16 1fr;
+    grid-template-rows: 16 1fr;
+    grid-template-areas: 
+    ". . . . . t t t t t t . . . . . "
+    ". . . . . t1 t1 t1 t1 t1 t1 . . . . . "
+    "k k k k k k k k n n n n n n n ."
+    ". . . . . . . . da da da da da da da ."
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "tab tab tab tab tab tab tab tab tab tab tab tab tab tab tab bi"
+    "f1 f1 f1 f3 f3 f3 f4 f4 f4 f5 f5 f6 f6 f7 f7 f7 "
+    "f2 f2 f2 f2 f2 f2 f2 f2 f2 f2 f2 f2 f2 f2 f2 f2 "
+    ". . . . . . . . . . . . f8 f8 f8 f8"
+     ;
+    /* border: 1px solid #000; */
+
+}
+div {
+    text-align: center;
+    
+}
+.title {
+    grid-area: t;
+    font-size: 24px;
+}
+.title1 {
+    font-size: 30px;
+    grid-area: t1;
+}
+.kehu {
+    grid-area: k;
+    display: flex;
+    justify-content: start;
+}
+.No {
+    grid-area: n;
+    display: flex;
+    justify-content: end;
+}
+.date  {
+    grid-area: da;
+    display: flex;
+    justify-content: end;
+
+}
+.ddh  {
+    grid-area: dd;
+    border: 1px solid #000;
+    border-left: 1px solid #000;
+
+}
+.zdlbm  {
+    grid-area: zd;
+    border: 1px solid #000;
+    border-left: 0px;
+}
+.pm  {
+    grid-area: pm;
+    border: 1px solid #000;
+    border-left: 0px;
+}
+.gg  {
+    grid-area: gg;
+    border: 1px solid #000;
+    border-left: 0px;
+}
+.width  {
+    grid-area: wi;
+    border: 1px solid #000;
+    border-left: 0px;
+    border-top: 0px;
+
+}
+.length  {
+    grid-area: le;
+    border: 1px solid #000;
+    border-left: 0px;
+    border-top: 0px;
+
+}
+.thickness  {
+    grid-area: th;
+    border: 1px solid #000;
+    border-left: 0px;
+    border-top: 0px;
+
+}
+.qty  {
+    grid-area: qty;
+    border: 1px solid #000;
+    border-left: 0px;
+
+}
+.pcs  {
+    grid-area: pcs;
+    border: 1px solid #000;
+    border-left: 0px;
+    border-top: 0px;
+
+}
+.seq  {
+    grid-area: seq;
+    border: 1px solid #000;
+    border-left: 0px;
+    border-top: 0px;
+
+}
+.lot  {
+    grid-area: lot;
+    border: 1px solid #000;
+    border-left: 0px;
+}
+.p_data  {
+    grid-area: pd;
+    border: 1px solid #000;
+    border-left: 0px;
+}
+
+.rem  {
+    grid-area: re;
+    border: 1px solid #000;
+    border-left: 0px;
+}
+.bianlan  {
+    grid-area: bi;
+    
+    
+}
+.table  {
+    grid-area: tab;
+    border: 1px solid #000;
+    border-top: 0px;
+}
+.feet1  {
+    grid-area: f1;
+    display: flex;
+    justify-content: start;
+}
+
+.feet2  {
+    grid-area: f2;
+    display: flex;
+    justify-content: start;
+}
+.feet3  {
+    grid-area: f3;
+}
+.feet4  {
+    grid-area: f4;
+}
+.feet5  {
+    grid-area: f5;
+}
+.feet6  {
+    grid-area: f6;
+}
+.feet7  {
+    grid-area: f7;
+}
+.feet8  {
+    grid-area: f8;
+    font-size: 10px;
+}
+

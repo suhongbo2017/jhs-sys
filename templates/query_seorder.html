@@ -1,0 +1,65 @@
+{% include 'base.html' %}
+{% block input %}
+{% endblock %}
+
+{% block queryRow %}
+<div class="d-flex  justify-content-center">
+    <div class="row">
+        
+    <form action="#" class="d-flex gap- 3">
+        <div>
+            <label for="startDate">开始日期</label>
+            <input type="date" name="startDate" id="startDate" required>
+        </div>
+        <div>
+            <label for="endDate">结束日期</label>
+            <input type="date" name="endDate" id="endDate" required>
+        </div>
+        <input type="submit" value="查询" width="100px" height="130px">
+        <button style="width: 100px;height: 30px;background-color: tomato;position: relative;left: 500px;">
+            <a href="./static/report/line.html" target="_blank" >查看图表</a>
+        </button>
+    </form>
+    <table id="myTable" class="table table-bordered">
+        <thead>
+            <tr>
+                {% for name in names %}
+                <th>{{ name }} </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for row in datas %}
+                {% for td in row[1] %}
+                <td>{{ td }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if message %}
+    {{ message }}
+    {% endif %}
+
+    </div>
+    
+</div>
+
+
+
+{% endblock %}
+{% block container %}
+<!-- <iframe src="./static/report/line.html" frameborder="1" width="1500px" height="600px"></iframe> -->
+
+{% endblock %}
+<!-- 下方是打印区域 -->
+{% block map %}
+
+
+{% endblock %}
+
+
+
+
+<script src="../static/js/print.js"></script>

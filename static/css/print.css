@@ -1,0 +1,19 @@
+
+table {
+    font-size: 10px;
+}
+
+p {
+    font-size: 11px;
+}
+
+label {
+    font-size: 10px;
+}
+
+/* @media print {
+    #printContent #tbody{
+        font-size: 8px;
+    }
+} */
+

@@ -1,0 +1,109 @@
+{% include 'base.html' %}
+{% block input %}
+{% endblock %}
+
+{% block queryRow %}
+
+<!-- 查询提交区域 -->
+<form action="#" method="post" class="d-flex  m-3 flex-row justify-content-center d-print-none">
+    <div class="row">
+        <div class="d-flex ">
+                <h1 class="h3 ">精力康烨</h1>
+                <input type="text" class="form-control m-3 text-dark bg-primary bg-opacity-25 "  placeholder="请输入送货单号" name="inputEntry" id="inputEntry">
+                <button type="submit" class="btn btn-primary m-3 ">提交查询</button>
+                <!-- ID:printTable触发print.js中的打印功能 -->
+                <button class="btn btn-primary m-3" id="printTable">打印单据</button>
+
+        </div>
+        
+    </div>
+</form>
+
+{% endblock %}
+{% block container %}
+
+
+{% endblock %}
+<!-- 下方是打印区域 -->
+{% block map %}
+<div class="container mt-2  lh-1" id="printContent">
+
+    <!-- 打印区域-表头部分 -->
+    <div class="d-flex flex-column fs-6 ">
+        <!-- title -->
+        <div class="title d-flex mt-2  flex-row justify-content-center text-align-end">
+            <h4>验收入库单</h4>
+        </div>
+        <br>
+        <!-- 单号与日期 -->
+        <div class="d-flex flex-row justify-content-between">
+            <p>客户名称: <input type="text" value="惠州市精力科技有限公司" class="border-0"> </p>
+            <p>送货单号: <input type="text" class="bg-primary bg-opacity-25 border-0" style="width: 100px;" value="{{ data }}"></p>
+        </div>
+        <!-- 地址 -->
+        <div class="d-flex flex-row justify-content-between">
+            <p>供应商:东莞市金恒晟新材料科技有限公司</p>
+            <p>送货日期: <input type="date" name="" id="" class="border-0"></p>
+            <p>供应商代码: <input type="text" style="width: 100px;" value="1476" class="border-0"></p>
+        </div>
+        <!-- 客户信息 -->
+        <!-- <div class="d-flex flex-row justify-content-between">
+            <p>收货地址:深圳市龙岗区龙岗街道同乐社区同力路68号东部影视城2号厂房</p>
+        </div> -->
+    </div>
+
+    <!-- 打印区域-表体 -->
+    <table class="table table-sm table-bordered border-dark mt-1 fs-9" id="tbody">
+        <!-- 列名 -->
+        <thead>
+            <tr>
+                <!-- <th class=" d-print-none">ID</th> -->
+                <th class="th1">订单号码</th>
+                <th class="th2">物料代码</th>
+                <th class="th3">物料名称</th>
+                <th class="th4">规格型号</th>
+                <th class="th5">单位</th>
+                <th class="th6">数量</th>
+                <th class="th7">批次号</th>
+                <th class="th8">备注</th>
+                <!-- <th class="d-print-none">操作</th> -->
+            </tr>
+        </thead>
+        <!-- 内容区域：使用flask的for循环对传入的数据进行打印 -->
+        <tbody>           
+            {% for d,i in table %}
+            <tr >
+                <!-- <td class="d-print-none">{{ d['ID'] }}</td> -->
+                <td >{{ i['订单号'] }}</td>
+                <td >{{ i['料号'] }}</td>
+                <td >{{ i['物料名称'] }}</td>
+                <td class="text-wrap" style="width: 4rem;">{{ i['整支规格'] }}</td>
+                <td >平方米</td>
+                <td >{{ i['数量'] }}</td>
+                <td >{{ i['批号'] }}</td>
+                <td >{{ i['备注'] }}</td>
+                <!-- <td id="td10"><button class="btn btn-primary d-print-none" >修改</button></td> -->
+            </tr>
+            {% endfor %}  
+        </tbody>
+    </table>
+    <!-- 打印区域-表尾 -->
+    <div class="mt-3 d-flex flex-row justify-content-between">
+        <label>采购确认:________________</label>
+        <label class="text-center">品管确认:________________</label>
+        <label>送  货  人:________________</label>
+
+    </div>
+    <div class="mt-3 d-flex flex-row justify-content-between">
+        <label>收 货 人:________________</label>
+        <label class="text-center">检验日期:________________</label>
+        <label>录 单 人:________________</label>
+
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+<script src="../static/js/print.js"></script>
