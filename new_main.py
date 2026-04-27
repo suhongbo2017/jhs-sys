@@ -8,8 +8,10 @@ import server_connect
 import pandas as pd
 import secrets
 import os
+import re # 导入 re 模块
 from functools import wraps
 from typing import Optional, Tuple, List, Dict, Any
+from PyDeepLX import PyDeepLX as dx # 将 PyDeepLX 导入移到顶部
 
 # 配置日志
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -51,7 +53,7 @@ def handle_errors(f):
         try:
             return f(*args, **kwargs)
         except Exception as e:
-            logger.error(f"Error in {f.__name__}: {str(e)}")
+            logger.error(f"Error in {f.__name__}: {str(e)}", exc_info=True)
             flash(str(e), "error")
             return render_template('error.html', error=str(e))
     return decorated_function
@@ -71,11 +73,17 @@ def process_delivery_data(data: str, code_name: int) -> Tuple[Optional[pd.DataFr
     logger.info(f"格式化输入单号：{data_list}")
     
     try:
-        datas = pd.concat([server_connect.query_SEord(ds, code_name) for ds in data_list])
+        # 过滤掉空的 DataFrame
+        results = [server_connect.query_SEord(ds, code_name) for ds in data_list]
+        datas = pd.concat([df for df in results if not df.empty])
+        
+        if datas.empty:
+            return None, None
+
         logger.info(f'合并后的内容: {datas.shape[0]} rows')
         return datas, seout_id
     except Exception as e:
-        logger.error(f"数据处理错误: {str(e)}")
+        logger.error(f"数据处理错误: {str(e)}", exc_info=True)
         raise
 
 # 通用打印请求处理
@@ -91,9 +99,10 @@ def handle_print_request(request, code_name: int, template_name: str):
             flash('未查询到数据', 'warning')
             return render_template(template_name)
             
-        return render_template(template_name, table=datas.iterrows(), data=seout_id)
+        # 将 DataFrame 转换为字典列表
+        return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
     except Exception as e:
-        logger.error(f"Error in handle_print_request: {str(e)}")
+        logger.error(f"Error in handle_print_request: {str(e)}", exc_info=True)
         flash(f"操作出错: {str(e)}", "error")
         return render_template(template_name)
 
@@ -139,34 +148,45 @@ def fengzhenchang_copy():    # 修改函数名，避免重复
 # 智动力数据处理函数
 def process_zhidongli_data(datas: pd.DataFrame) -> pd.DataFrame:
     try:
-        newdatas = datas.loc[:, [60, 68, 67, 65, 70, 71, 27]]
-        import re
-        new71 = newdatas[71].str.split('*')
-        newdatas['厚'], newdatas['宽'], newdatas['长'], newdatas['支'] = [re.sub('[URM]', '', x) for x in new71[0]]
-        newdatas.drop(71, inplace=True, axis=1)
+        # 假设 codeName=2 返回的列名为：['物料名称', '整支规格', '料号', '批号', '订单号', '数量', '备注', '批次号']
+        # 根据实际需求选择和重命名列
+        newdatas = datas[['订单号', '批次号', '物料名称', '数量', '整支规格', '备注']].copy()
         
-        # 数据映射
+        # 解析 '整支规格' 列，并添加健壮性检查
+        newdatas[['厚', '宽', '长', '支']] = pd.DataFrame([
+            _parse_spec_string(spec) for spec in newdatas['整支规格']
+        ], index=newdatas.index)
+        
+        newdatas.drop('整支规格', axis=1, inplace=True) # 删除原始整支规格列
+        
+        # 数据映射和重命名
         column_mapping = {
-            60: '订单号',
-            68: '智动力编码',
-            67: '品名',
-            65: '数量',
-            70: '批次号',
-            27: '生产日期'
+            '订单号': '订单号',
+            '批次号': '智动力编码', # 假设批次号对应智动力编码
+            '物料名称': '品名',
+            '数量': '数量',
+            '备注': '生产日期' # 假设备注对应生产日期，需要进一步确认逻辑
         }
+        newdatas.rename(columns=column_mapping, inplace=True)
         
-        for old_col, new_col in column_mapping.items():
-            newdatas[new_col] = newdatas[old_col][0]
-            
         newdatas['数量'] = newdatas['数量'].apply(lambda x: round(float(x), 2))
-        newdatas['生产日期'] = newdatas['生产日期'].dt.date
+        # 生产日期可能需要更复杂的解析，这里假设备注中包含日期信息
+        # newdatas['生产日期'] = pd.to_datetime(newdatas['生产日期'], errors='coerce').dt.date
         
-        # 删除旧列并重排列顺序
-        newdatas.drop([60, 68, 67, 65, 70, 27], inplace=True, axis=1)
-        return newdatas.loc[:, ['订单号', '智动力编码', '品名', '宽', '长', '厚', '支', '数量', '批次号']]
+        # 重新排列顺序
+        return newdatas.loc[:, ['订单号', '智动力编码', '品名', '宽', '长', '厚', '支', '数量', '生产日期']]
     except Exception as e:
-        logger.error(f"智动力数据处理错误: {str(e)}")
+        logger.error(f"智动力数据处理错误: {str(e)}", exc_info=True)
         raise
+
+# 辅助函数：解析规格字符串
+def _parse_spec_string(spec_string: str) -> List[Any]:
+    # 示例解析逻辑，需要根据实际的规格字符串格式进行调整
+    # 假设格式为 "厚*宽*长*支" 或类似
+    parts = re.findall(r'(\d+\.?\d*)[URM]*', str(spec_string))
+    # 确保返回固定数量的元素，不足时填充 None 或默认值
+    parsed_values = [float(p) if p else None for p in parts]
+    return (parsed_values + [None] * 4)[:4] # 确保返回4个元素
 
 @app.route('/zhidongli', methods=['GET', 'POST'])
 @handle_errors
@@ -190,7 +210,7 @@ def zhidongli():
                              data=seout_id,
                              names=processed_data.columns)
     except Exception as e:
-        logger.error(f"Error in zhidongli route: {str(e)}")
+        logger.error(f"Error in zhidongli route: {str(e)}", exc_info=True)
         flash(f"操作出错: {str(e)}", "error")
         return render_template('zhidongli.html')
 
@@ -202,9 +222,12 @@ def process_material_query(q_data: str, query_func) -> Tuple[Optional[pd.DataFra
             raise ValueError("查询格式错误：请使用'/'分隔两个查询条件")
             
         datas = query_func(conditions[0])
+        if datas.empty:
+            return pd.DataFrame(), "多条件查询" # 返回空 DataFrame
+        
         result = datas.loc[
-            (datas['物料名称'].str.contains(conditions[1])) |
-            (datas['规格型号'].str.contains(conditions[1]))
+            (datas['物料名称'].str.contains(conditions[1], na=False)) |
+            (datas['规格型号'].str.contains(conditions[1], na=False))
         ]
         return result, "多条件查询"
     else:
@@ -233,7 +256,7 @@ def queryMaterial():
         flash(str(ve), 'warning')
         return render_template('queryMaterial.html')
     except Exception as e:
-        logger.error(f"Error in queryMaterial: {str(e)}")
+        logger.error(f"Error in queryMaterial: {str(e)}", exc_info=True)
         flash(f"查询出错: {str(e)}", "error")
         return render_template('queryMaterial.html')
 
@@ -260,7 +283,7 @@ def LSMqueryMaterial():
         flash(str(ve), 'warning')
         return render_template('LSMqueryMaterial.html')
     except Exception as e:
-        logger.error(f"Error in LSMqueryMaterial: {str(e)}")
+        logger.error(f"Error in LSMqueryMaterial: {str(e)}", exc_info=True)
         flash(f"查询出错: {str(e)}", "error")
         return render_template('LSMqueryMaterial.html')
 
@@ -278,14 +301,13 @@ def translate():
             
         logger.info(f"翻译请求 - 语言: {lang}, 文本: {strs}")
         
-        from PyDeepLX import PyDeepLX as dx
         translator = dx()
         result = translator.translate(strs, source_lang="auto", target_lang=lang)
         
         logger.info(f"翻译完成: {result}")
         return render_template('translate.html', result=result)
     except Exception as e:
-        logger.error(f"翻译错误: {str(e)}")
+        logger.error(f"翻译错误: {str(e)}", exc_info=True)
         flash(f"翻译出错: {str(e)}", "error")
         return render_template('translate.html')
 

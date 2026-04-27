@@ -1,1 +1,244 @@
 2025-08-21 14:48:12,510 - new_main - WARNING - 未提供翻译文本
+2025-08-22 08:05:11,266 - new_main - INFO - 查询输入: 围栏
+2025-08-22 08:05:11,428 - new_main - INFO - 单条件查询成功: 1 条记录
+2025-08-22 08:05:18,117 - new_main - INFO - 查询输入: 主机
+2025-08-22 08:05:18,236 - new_main - INFO - 单条件查询成功: 20 条记录
+2025-09-10 09:34:28,886 - new_main - INFO - 格式化输入单号：['JHS0223391']
+2025-09-10 09:34:28,915 - new_main - INFO - 合并后的内容: 4 rows
+2025-09-10 09:34:55,262 - new_main - INFO - 格式化输入单号：['JHS0223391']
+2025-09-10 09:34:55,284 - new_main - INFO - 合并后的内容: 4 rows
+2025-10-10 17:48:36,370 - new_main - WARNING - 未提供翻译文本
+2025-10-10 17:48:48,293 - new_main - INFO - 查询输入: 围栏
+2025-10-10 17:48:48,409 - new_main - INFO - 单条件查询成功: 1 条记录
+2025-10-10 17:55:03,664 - new_main - WARNING - 未提供翻译文本
+2025-10-10 17:56:17,116 - new_main - INFO - 格式化输入单号：['JHS0102609']
+2025-10-10 17:56:17,125 - new_main - INFO - 合并后的内容: 1 rows
+2025-10-13 11:27:25,046 - new_main - WARNING - 未提供翻译文本
+2026-01-23 16:09:35,246 - new_main - WARNING - 未提供翻译文本
+2026-01-23 16:09:46,598 - new_main - WARNING - 未提供翻译文本
+2026-02-06 11:41:24,953 - new_main - INFO - 格式化输入单号：['JHS032152']
+2026-02-06 11:41:25,124 - new_main - ERROR - 数据处理错误: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-02-06 11:41:25,128 - new_main - ERROR - Error in handle_print_request: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 97, in handle_print_request
+    datas, seout_id = process_delivery_data(data, code_name)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-02-06 11:41:46,141 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-02-06 11:41:46,186 - new_main - INFO - 合并后的内容: 4 rows
+2026-02-06 11:41:46,202 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 29, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 75, in block 'map'
+    {% for d,i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-02-06 11:41:49,408 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-02-06 11:41:49,423 - new_main - INFO - 合并后的内容: 4 rows
+2026-02-06 11:41:49,424 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 29, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 75, in block 'map'
+    {% for d,i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-02-06 11:41:53,168 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-02-06 11:41:53,190 - new_main - INFO - 合并后的内容: 6 rows
+2026-02-06 11:41:53,197 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\jiuMaoPrint.html", line 28, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\jiuMaoPrint.html", line 78, in block 'map'
+    {% for d,i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-02-06 11:43:50,861 - app_client - INFO - 格式化输入单号：['JHS0101707']
+2026-02-06 11:43:51,003 - app_client - INFO - 合并后的内容: 4 rows
+2026-02-07 08:42:02,373 - app_client - INFO - LSM查询输入: 刀
+2026-02-07 08:42:02,626 - app_client - INFO - LSM单条件查询成功: 140 条记录
+2026-02-07 16:25:53,996 - app_client - INFO - 查询输入: 硬盘
+2026-02-07 16:25:54,201 - app_client - INFO - 单条件查询成功: 36 条记录
+2026-02-07 16:28:35,381 - app_client - INFO - 查询输入: 硬盘
+2026-02-07 16:28:35,635 - app_client - INFO - 单条件查询成功: 36 条记录
+2026-02-07 16:40:21,098 - new_main - INFO - 查询输入: 电脑
+2026-02-07 16:40:21,352 - new_main - INFO - 单条件查询成功: 45 条记录
+2026-02-07 16:40:48,440 - new_main - INFO - 查询输入: ABS管
+2026-02-07 16:40:48,570 - new_main - INFO - 单条件查询成功: 41 条记录
+2026-04-27 16:17:16,809 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:17:17,008 - new_main - INFO - 合并后的内容: 4 rows
+2026-04-27 16:17:17,014 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 29, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 75, in block 'map'
+    {% for d,i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-04-27 16:17:20,555 - new_main - INFO - 格式化输入单号：['JHS0103830']
+2026-04-27 16:17:20,567 - new_main - INFO - 合并后的内容: 1 rows
+2026-04-27 16:17:20,569 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 29, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 75, in block 'map'
+    {% for d,i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-04-27 16:20:58,578 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:20:58,605 - new_main - INFO - 合并后的内容: 4 rows
+2026-04-27 16:20:58,606 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    return render_template(template_name, table=datas.iterrows(), data=seout_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 29, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 75, in block 'map'
+    {% for d,i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-04-27 16:21:42,607 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:21:42,616 - new_main - INFO - 合并后的内容: 4 rows
+2026-04-27 16:21:42,618 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    table_data = [(i, row.to_dict()) for i, row in datas.iterrows()]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 29, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 75, in block 'map'
+    {% for d,i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-04-27 16:22:37,803 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:22:37,812 - new_main - INFO - 合并后的内容: 4 rows
+2026-04-27 16:22:37,814 - new_main - ERROR - Error in handle_print_request: too many values to unpack (expected 2)
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 103, in handle_print_request
+    return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 29, in top-level template code
+    {% block map %}
+  File "D:\VSCODE\PYTHON3\system\templates\yunHaiPrint.html", line 75, in block 'map'
+    {% for i in table %}
+ValueError: too many values to unpack (expected 2)
+2026-04-27 16:23:18,423 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:23:18,542 - new_main - INFO - 合并后的内容: 4 rows
+2026-04-27 16:24:25,976 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:24:25,987 - new_main - INFO - 合并后的内容: 4 rows
+2026-04-27 16:24:37,398 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:24:37,407 - new_main - INFO - 合并后的内容: 6 rows

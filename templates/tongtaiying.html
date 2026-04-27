@@ -324,7 +324,7 @@
         </thead>
         <tbody>           
                 {% if table %}
-                    {% for index, row in table %}
+                    {% for row in table %}
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>{{ row['采购订单'] }}</td>

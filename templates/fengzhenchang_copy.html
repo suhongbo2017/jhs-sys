@@ -329,14 +329,14 @@
             </thead>
             <tbody>
                 {% if table %}
-                    {% for index, row in table %}
+                    {% for row in table %}
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>{{ row['采购订单'] }}</td>
                         <td>{{ row['TTY新料号'] }}</td>
                         <td>
                             <div class="product-name-cell">
-                                <div>{{ row['产品名称'] }}</div>
+                                <input type="text" value="{{ row['产品名称'] }}">
                                 <input type="text" value="{{ row['规格'] }}">
                                 <div>{{ row['型号'] }}</div>
                             </div>

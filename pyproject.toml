@@ -1,14 +1,18 @@
 [project]
 name = "jhssystem"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Flask application for querying Kingdee database delivery and material information."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "flask>=3.1.2",
     "flask-bootstrap>=3.3.7.1",
-    "flask-bootstrap5>=0.1.dev1",
     "pandas>=2.3.1",
     "pyodbc>=5.2.0",
+    "sqlalchemy>=2.0.43",
     "waitress>=3.0.2",
+    "gunicorn>=22.0.0", # 添加 gunicorn 依赖
+    "mysql-connector-python>=8.0.0,<9.0.0", # 添加 mysql-connector-python 依赖，并限制版本以确保 Windows 兼容性
+    "PyDeepLX>=0.1.0", # 添加 PyDeepLX 依赖
+    "pyinstaller>=6.7.0", # 添加 PyInstaller 依赖
 ]

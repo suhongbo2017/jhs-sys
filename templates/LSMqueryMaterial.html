@@ -4,7 +4,7 @@
     <form action="/LSMqueryMaterial" method="post" class="row gap-2">
         <p class=""><mark>铝塑膜</mark>
             物料查询方式：单查询为直接输入。多项查询为多查询中间用“/”分隔。例如：查询240G的硬盘."硬盘/240"</p>
-        <input type="text"  placeholder="输入要查询的物料名称" id="material" name="material" required>
+        <input type="text" placeholder="输入要查询的物料名称" id="material" name="material" required>
         <button type="submit" class="btn btn-primary ">查询数据</button>
     </form>
 </div>
@@ -22,7 +22,7 @@
                 <th>物料代码</th>
                 <th>短代码</th>
                 <th>内码</th>
-                <!-- <th>单位</th>
+                <th>单位</th>
                 <th>数量</th>
                 <th>分切规格</th> -->
             </tr>
@@ -31,11 +31,12 @@
             {% for i,d in datas %}
             <tr>
                 <!-- <td >{{ d['ID'] }}</td> -->
-                <td >{{ d['物料名称'] }}</td>
-                <td >{{ d['规格型号'] }}</td>
-                <td >{{ d['物料代码'] }}</td>
-                <td >{{ d['短代码'] }}</td>
-                <td >{{ d['内码'] }}</td>
+                <td>{{ d['物料名称'] }}</td>
+                <td>{{ d['规格型号'] }}</td>
+                <td>{{ d['物料代码'] }}</td>
+                <td>{{ d['短代码'] }}</td>
+                <td>{{ d['内码'] }}</td>
+                <td>{{ d['单位'] }}</td>
                 <!-- <td >平方米</td>
                 <td >{{ d['数量'] }}</td>
                 <td >{{ d['备注'] }}</td> -->
@@ -43,9 +44,9 @@
             {% endfor %}
         </tbody>
     </table>
-    
+
     <h2 class="text-danger">{{ data }}</h2>
-</div> 
+</div>
 
 
 

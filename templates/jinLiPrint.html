@@ -71,9 +71,9 @@
         </thead>
         <!-- 内容区域：使用flask的for循环对传入的数据进行打印 -->
         <tbody>           
-            {% for d,i in table %}
+            {% for i in table %}
             <tr >
-                <!-- <td class="d-print-none">{{ d['ID'] }}</td> -->
+                <!-- <td class="d-print-none">{{ i['ID'] }}</td> -->
                 <td >{{ i['订单号'] }}</td>
                 <td >{{ i['料号'] }}</td>
                 <td >{{ i['物料名称'] }}</td>
