@@ -45,20 +45,7 @@ pip install ".[all]" # 如果 pyproject.toml 配置了可选依赖
 pip install flask flask-bootstrap pandas pyodbc sqlalchemy waitress gunicorn mysql-connector-python PyDeepLX
 ```
 
-### 4. 配置数据库环境变量
-在项目根目录下创建 `.env` 文件，并添加以下内容（根据您的实际数据库配置进行修改）：
-```
-DB_SERVER=192.168.0.234
-DB_DATABASE=AIS20191210135722
-DB_USERNAME=sa
-DB_PASSWORD=Jhs16888
 
-MYSQL_USER=su
-MYSQL_PASSWORD=123456
-MYSQL_HOST=192.168.0.118
-MYSQL_DATABASE=material_table
-
-SECRET_KEY=your_secret_key_here # 建议使用 secrets.token_hex(16) 生成一个随机密钥
 ```
 
 ## 运行指南
