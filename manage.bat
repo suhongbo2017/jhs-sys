@@ -1,4 +1,6 @@
 @echo off
+:: 设置字符集为 UTF-8 解决乱码
+chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 :: 设置项目信息
@@ -16,8 +18,9 @@ echo  2. 停止服务 (Stop)
 echo  3. 重启服务 (Restart)
 echo  4. 查看状态 (Status)
 echo  5. 查看实时日志 (Logs)
-echo  6. 清理并保存状态 (Save)
-echo  7. 退出 (Exit)
+echo  6. 删除/关闭任务 (Delete)
+echo  7. 保存开机自启 (Save)
+echo  8. 退出 (Exit)
 echo ==========================================
 set /p choice=请输入数字选择操作: 
 
@@ -26,8 +29,9 @@ if "%choice%"=="2" goto STOP
 if "%choice%"=="3" goto RESTART
 if "%choice%"=="4" goto STATUS
 if "%choice%"=="5" goto LOGS
-if "%choice%"=="6" goto SAVE
-if "%choice%"=="7" goto EXIT
+if "%choice%"=="6" goto DELETE
+if "%choice%"=="7" goto SAVE
+if "%choice%"=="8" goto EXIT
 goto MENU
 
 :START
@@ -37,7 +41,7 @@ pause
 goto MENU
 
 :STOP
-echo 正在停止服务...
+echo 正在停止服务 (暂停)...
 pm2 stop %APP_NAME%
 pause
 goto MENU
@@ -56,6 +60,12 @@ goto MENU
 :LOGS
 echo 正在打开实时日志 (按 Ctrl+C 退出日志查看)...
 pm2 logs %APP_NAME%
+goto MENU
+
+:DELETE
+echo [警告] 正在彻底删除/关闭任务...
+pm2 delete %APP_NAME%
+pause
 goto MENU
 
 :SAVE
