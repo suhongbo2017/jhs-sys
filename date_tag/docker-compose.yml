@@ -1,0 +1,9 @@
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: date-tag-nginx
+    ports:
+      - "8081:80" # Changed from 8080 to 8081 due to port conflict
+    volumes:
+      - .:/usr/share/nginx/html:ro
+    restart: always

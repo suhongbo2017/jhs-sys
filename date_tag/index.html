@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期标签生成器 | Date Tag Designer</title>
+    <meta name="description" content="一个高级的日期标签在线设计工具，支持自定义形状、月份和年份。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <header>
+                <h1>日期标签设计</h1>
+                <p>配置您的打印标签</p>
+            </header>
+
+            <section class="control-group">
+                <h3>1. 排列与纸张</h3>
+                <div class="input-row">
+                    <label>纸张规格</label>
+                    <div class="button-grid" id="paper-options">
+                        <button class="paper-btn active" data-width="auto">自适应单元</button>
+                        <button class="paper-btn" data-width="210" data-height="297">A4 (210x297)</button>
+                        <button class="paper-btn" data-width="100" data-height="150">6寸 (100x150)</button>
+                    </div>
+                </div>
+                <div class="input-row-grid">
+                    <div class="input-row">
+                        <label>行数</label>
+                        <input type="number" id="grid-rows" value="1" min="1" max="20">
+                    </div>
+                    <div class="input-row">
+                        <label>列数</label>
+                        <input type="number" id="grid-cols" value="1" min="1" max="20">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>间距 (mm)</label>
+                    <input type="number" id="grid-spacing" value="5" min="0" max="50">
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h3>2. 图形设置</h3>
+                <div class="button-grid" id="shape-options">
+                    <button class="shape-btn active" data-shape="circle">正圆</button>
+                    <button class="shape-btn" data-shape="ellipse">椭圆</button>
+                    <button class="shape-btn" data-shape="square">正方形</button>
+                    <button class="shape-btn" data-shape="rectangle">长方形</button>
+                </div>
+                <div class="range-control">
+                    <label>图形缩放: <span id="shape-size-val">80%</span></label>
+                    <input type="range" id="shape-scale" min="20" max="100" value="80">
+                </div>
+                <div class="input-row">
+                    <label>图形底色与轮廓</label>
+                    <div class="color-palette" id="shape-palette">
+                        <div class="color-chip" style="background: #0070c0" data-color="#0070c0"></div>
+                        <div class="color-chip" style="background: #d99694" data-color="#d99694"></div>
+                        <div class="color-chip" style="background: #c6efce" data-color="#c6efce"></div>
+                        <div class="color-chip" style="background: #ffff00" data-color="#ffff00"></div>
+                        <div class="color-chip" style="background: #7030a0" data-color="#7030a0"></div>
+                        <div class="color-chip" style="background: #e26b0a" data-color="#e26b0a"></div>
+                        <div class="color-chip" style="background: #00ff00" data-color="#00ff00"></div>
+                        <div class="color-chip" style="background: #7f7f7f" data-color="#7f7f7f"></div>
+                        <div class="color-chip" style="background: #ffffff" data-color="#ffffff"></div>
+                        <div class="color-chip" style="background: #9bc2e6" data-color="#9bc2e6"></div>
+                        <div class="color-chip" style="background: #ff00ff" data-color="#ff00ff"></div>
+                        <div class="color-chip" style="background: #ffff99" data-color="#ffff99"></div>
+                        <div class="color-chip custom-chip" id="custom-color-trigger" title="自定义颜色">
+                            <i class="icon-plus">+</i>
+                        </div>
+                    </div>
+                    <input type="color" id="shape-color" value="#1e293b" style="display: none;">
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h3>3. 月份标签</h3>
+                <div class="input-row">
+                    <label>月份内容</label>
+                    <input type="text" id="month-input" value="JAN" placeholder="输入月份...">
+                </div>
+                <div class="input-row">
+                    <label>位置</label>
+                    <select id="month-pos">
+                        <option value="center">正中</option>
+                        <option value="top">中上</option>
+                        <option value="bottom">中下</option>
+                        <option value="left">中左</option>
+                        <option value="right">中右</option>
+                    </select>
+                </div>
+                <div class="input-row">
+                    <label>字体大小</label>
+                    <input type="number" id="month-font-size" value="150">
+                </div>
+                <div class="input-row">
+                    <label>字体颜色</label>
+                    <input type="color" id="month-color" value="#000000">
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h3>4. 年份字段</h3>
+                <div class="input-row">
+                    <input type="number" id="year-input" value="2026" min="1900" max="2100">
+                </div>
+                <div class="input-row">
+                    <label>位置</label>
+                    <select id="year-pos">
+                        <option value="center">正中</option>
+                        <option value="top">中上</option>
+                        <option value="bottom" selected>中下</option>
+                        <option value="left">中左</option>
+                        <option value="right">中右</option>
+                    </select>
+                </div>
+                <div class="input-row">
+                    <label>字体大小</label>
+                    <input type="number" id="year-font-size" value="50">
+                </div>
+                <div class="input-row">
+                    <label>字体颜色</label>
+                    <input type="color" id="year-color" value="#000000">
+                </div>
+            </section>
+
+            <footer class="sidebar-footer">
+                <button id="print-btn" class="primary-btn">准备打印</button>
+            </footer>
+        </aside>
+
+        <main class="preview-area">
+            <div class="preview-container">
+                <div class="canvas-wrapper" id="canvas-wrapper">
+                    <svg id="tag-svg" width="400" height="400" viewBox="0 0 400 400">
+                        <defs>
+                            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                                <feOffset dx="2" dy="2" result="offsetblur" />
+                                <feComponentTransfer>
+                                    <feFuncA type="linear" slope="0.3" />
+                                </feComponentTransfer>
+                                <feMerge>
+                                    <feMergeNode />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <g id="preview-group"></g>
+                    </svg>
+                </div>
+                <div class="preview-label">实时预览 (400x400 px 等比例显示)</div>
+            </div>
+        </main>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>

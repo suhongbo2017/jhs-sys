@@ -1,48 +1,86 @@
-<ul class="nav nav-tabs  navbar-dark bg-light d-print-none">
-        <div>
-            
-        </div>
-        <li class="nav-link">
-            <a href="/" class="nav-link active">主页</a>
-        </li>
+<nav class="navbar navbar-expand-lg sticky-top d-print-none">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center me-4" href="/">
+            <img src="/static/img/LOGO英文原文件-removebg-preview.ico" style="height: 40px;" class="me-2" alt="Logo">
+            <span class="fs-5 fw-bold text-primary d-none d-sm-inline">金恒晟系统</span>
+        </a>
         
-        <!-- <li class="nav-link">
-            <a href="#" class="nav-link">数据录入</a>
-        </li>
-        <li class="nav-link">
-            <a href="/Scheduled_Tasks" class="nav-link">数据显示</a>
-        </li> -->
-        <li class="nav-link">
-            <a href="/LSMqueryMaterial" class="nav-link">LSM物料查询</a>
-        </li>
-        <li class="nav-link">
-            <a href="/queryMaterial" class="nav-link">物料查询</a>
-        </li>
-        <!-- <li class="nav-link">
-            <a href="/5s" class="nav-link">5S检查汇总</a> -->
-        <!-- </li> -->
-        <!-- <li class="nav-link">
-            <a href="/translate" class="nav-link">中英翻译</a>
-        </li> -->
-        <li class="nav-item dropdown m-2">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              单据打印模板
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item " href="/yunHaiPrint">云海模板</a></li>
-              <!-- <li><a class="dropdown-item " href="/jinLiPrint">精力模板/康烨</a></li> -->
-              <li><a class="dropdown-item " href="/jiuMaoPrint">九茂模板</a></li>
-              <!-- <li><a class="dropdown-item " href="/qianJi">千吉模板</a></li> -->
-              <li><a class="dropdown-item " href="/zhidongli">智动力</a></li>
-              <li><a class="dropdown-item " href="/tongtaiying">通泰盈</a></li>
-              <li><a class="dropdown-item " href="/fengzhenchang">丰正昌</a></li>
-              <li><a class="dropdown-item " href="/fengzhenchang_copy">丰正昌2</a></li>
-              <li><a class="dropdown-item " href="#">其它模板待续</a></li>
-              
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a href="/" class="nav-link px-3">主页</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/LSMqueryMaterial" class="nav-link px-3">LSM查询</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/queryMaterial" class="nav-link px-3">物料查询</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/date_tag_view" class="nav-link px-3">月份标签</a>
+                </li>
+                <li class="nav-item dropdown ms-lg-2">
+                    <a class="nav-link dropdown-toggle px-3" href="#" id="printDropdown" role="button" data-bs-toggle="dropdown">
+                        打印模板
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-sm">
+                        <li><a class="dropdown-item" href="/yunHaiPrint">云海模板</a></li>
+                        <li><a class="dropdown-item" href="/jiuMaoPrint">九茂模板</a></li>
+                        <li><a class="dropdown-item" href="/zhidongli">智动力</a></li>
+                        <li><a class="dropdown-item" href="/tongtaiying">通泰盈</a></li>
+                        <li><a class="dropdown-item" href="/fengzhenchang">丰正昌</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item disabled" href="#">更多敬请期待</a></li>
+                    </ul>
+                </li>
             </ul>
-        </li>
-        <div class=" m-auto">
-            <h2><img src="/static/img/LOGO英文原文件-removebg-preview.ico" style="height: 68px;" alt="">金恒晟新材料科技有限公司 v1.0.0 (2026-01-31)</h2>
+            
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-light rounded-circle shadow-sm" id="theme-toggle-btn" onclick="toggleTheme()" title="切换模式">
+                    <i class="bi bi-sun-fill" id="theme-icon"></i>
+                </button>
+            </div>
         </div>
+    </div>
+</nav>
+
+<script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
-    </ul>
+        html.setAttribute('data-bs-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    }
+
+    function updateThemeIcon(theme) {
+        const icon = document.getElementById('theme-icon');
+        const btn = document.getElementById('theme-toggle-btn');
+        if (theme === 'dark') {
+            icon.className = 'bi bi-moon-stars-fill text-info';
+            btn.className = 'btn btn-dark rounded-circle shadow-sm';
+        } else {
+            icon.className = 'bi bi-sun-fill text-warning';
+            btn.className = 'btn btn-light rounded-circle shadow-sm';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const theme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+        updateThemeIcon(theme);
+        
+        // Active link highlighting
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>

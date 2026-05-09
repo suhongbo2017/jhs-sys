@@ -1,7 +1,7 @@
 # 导入所需的库
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, request, flash, redirect, url_for, abort
+from flask import Flask, render_template, request, flash, redirect, url_for, abort, send_from_directory
 from werkzeug.utils import secure_filename
 from flask_bootstrap import Bootstrap # 修改为 flask_bootstrap---
 import server_connect
@@ -110,6 +110,18 @@ def handle_print_request(request, code_name: int, template_name: str):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/date_tag/')
+def date_tag():
+    return send_from_directory('date_tag', 'index.html')
+
+@app.route('/date_tag_view')
+def date_tag_view():
+    return render_template('date_tag_view.html')
+
+@app.route('/date_tag/<path:path>')
+def date_tag_static(path):
+    return send_from_directory('date_tag', path)
 
 @app.route('/yunHaiPrint', methods=['GET', 'POST'])
 @handle_errors
