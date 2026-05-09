@@ -1,104 +1,168 @@
 {% include 'base.html' %}
-{% block input %}
-{% endblock %}
 
 {% block queryRow %}
-
-<!-- 查询提交区域 -->
-<form action="#" method="post" class="d-flex  m-3 flex-row justify-content-center d-print-none">
-    <div class="row">
-        <div class="d-flex ">
-            <h1 class="h2 ">云海模板</h1>
-            <input type="text" class="form-control m-3 text-dark bg-primary bg-opacity-25"  placeholder="可以使用“/”对单号进行拼接" name="inputEntry" id="inputEntry">
-                     
-                <button type="submit" class="btn btn-primary m-3 ">提交查询</button>
-                <!-- ID:printTable触发print.js中的打印功能 -->
-                <button class="btn btn-primary m-3 " id="printTable">打印单据</button>
-
+<div class="container-fluid d-print-none py-3 bg-white border-bottom shadow-sm">
+    <form action="{{ url_for('yunHaiPrint') }}" method="post" class="container">
+        <div class="row align-items-center g-3">
+            <div class="col-auto">
+                <h3 class="h4 mb-0 text-primary fw-bold">云海模板</h3>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text bg-primary bg-opacity-10 border-primary border-opacity-25">
+                        <i class="bi bi-search text-primary"></i>
+                    </span>
+                    <input type="text" class="form-control border-primary border-opacity-25" 
+                           placeholder="请输入送货单号..." name="inputEntry" id="inputEntry" 
+                           value="{{ data if data }}" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-auto d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-funnel"></i> 查询
+                </button>
+                <button type="button" class="btn btn-outline-primary px-4 d-flex align-items-center gap-2" id="printTable">
+                    <i class="bi bi-printer"></i> 打印单据
+                </button>
+            </div>
         </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block head %}
+<style>
+    @page { size: 210mm 148mm landscape; margin: 0; }
+    body { background-color: #f1f5f9; }
+    .preview-container {
+        width: 210mm; height: 148mm; margin: 30px auto; background: white;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1); border-radius: 4px;
+    }
+    #printContent { width: 210mm; height: 148mm; padding: 10mm; box-sizing: border-box; color: #000; font-family: "SimSun", serif; }
+    .doc-title { font-size: 16pt; font-weight: bold; text-align: center; margin-bottom: 4mm; }
+    .print-table { width: 100%; border-collapse: collapse; margin: 5mm 0; border: 1.5pt solid #000; }
+    .print-table th, .print-table td { border: 1pt solid #000; padding: 1.5mm 1mm; text-align: center; font-size: 8.5pt; line-height: 1.2; }
+    .print-table th { background-color: #f8fafc; }
+    .info-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2mm; font-size: 9.5pt; margin-bottom: 4mm; }
+    .info-item { display: flex; gap: 2mm; }
+    .info-label { font-weight: bold; }
+    .info-input { border: none; border-bottom: 1px solid #ccc; width: 100%; font-size: 9.5pt; outline: none; }
+    .doc-footer { margin-top: 5mm; font-size: 9.5pt; }
+    .sig-row { display: flex; justify-content: space-between; margin-bottom: 4mm; }
+    /* 强力修复空白页方案 */
+    @media print {
+        @page { size: 210mm 148mm landscape; margin: 0; }
         
-    </div>
-</form>
+        /* 隐藏整个 body，防止任何隐藏元素占据空间 */
+        body { 
+            visibility: hidden; 
+            margin: 0 !important; 
+            padding: 0 !important;
+            background: white !important;
+        }
 
+        /* 仅将打印容器设为可见，并固定在左上角脱离文档流 */
+        .preview-container { 
+            visibility: visible;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 210mm !important;
+            height: 148mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            overflow: hidden !important;
+        }
+
+        #printContent {
+            visibility: visible;
+            padding: 10mm !important;
+            color: #000 !important;
+        }
+
+        .print-table, .print-table th, .print-table td {
+            border: 1pt solid #000 !important;
+            color: #000 !important;
+            background: transparent !important;
+            visibility: visible;
+        }
+        
+        /* 确保所有文字可见 */
+        #printContent * { visibility: visible; }
+    }
+</style>
 {% endblock %}
-{% block container %}
 
-
-{% endblock %}
-<!-- 下方是打印区域 -->
 {% block map %}
-<div class="container mt-2  lh-1" id="printContent">
+<div class="preview-container">
+    <div id="printContent">
+        <div class="doc-title">
+            <div style="font-size: 11pt; margin-bottom: 1mm;">东莞市金恒晟新材料科技有限公司</div>
+            送 货 单
+        </div>
 
-    <!-- 打印区域-表头部分 -->
-    <div class="d-flex flex-column fs-6 ">
-        <!-- title -->
-        <div class="title d-flex mt-2  flex-row justify-content-center text-align-end">
-            <h4>东莞市金恒晟新材料科技有限公司</h4>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">客户名称:</span>
+                <span>深圳市云海电子辅料有限公司</span>
+            </div>
+            <div class="info-item justify-content-end">
+                <span class="info-label">送货单号:</span>
+                <input type="text" class="info-input" style="width: 120px" value="{{ data if data }}">
+            </div>
+            <div class="info-item">
+                <span class="info-label">收货地址:</span>
+                <span>深圳市龙岗区同乐社区同力路68号</span>
+            </div>
+            <div class="info-item justify-content-end">
+                <span class="info-label">送货日期:</span>
+                <input type="date" class="info-input" style="width: 120px">
+            </div>
         </div>
-        <br>
-        <!-- 单号与日期 -->
-        <div class="d-flex flex-row justify-content-between">
-            <p>送货单号: <input type="text" class="bg-primary bg-opacity-25 border-0" style="width: 300px;" value="{{ data }}"></p>
-            <p>送货日期: <input type="date" name="" id="" class="border-0"></p>
-        </div>
-        <!-- 地址 -->
-        <div class="d-flex flex-row justify-content-between">
-            <p>地址:东莞市谢岗镇谢曹路798号</p>
-            <p>电话:0769-83509999</p>
-        </div>
-        <!-- 客户信息 -->
-        <div class="d-flex flex-row justify-content-between">
-            <p>客户名称:深圳市云海电子辅料有限公司</p>
-            <p >收货地址:深圳市龙岗区龙岗街道同乐社区同力路68号东部影视城2号厂房</p>
-        </div>
-    </div>
 
-    <!-- 打印区域-表体 -->
-    <table class="table table-sm table-bordered border-dark mt-1 fs-9" id="tbody">
-        <!-- 列名 -->
-        <thead>
-            <tr>
-                <!-- <th class=" d-print-none">ID</th> -->
-                <th class="th1">物料名称</th>
-                <th class="th2">整支规格</th>
-                <th class="th3">料号</th>
-                <th class="th4">批号</th>
-                <th class="th5">订单号</th>
-                <th class="th6">单位</th>
-                <th class="th7">数量</th>
-                <th class="th8">分切规格</th>
-                <!-- <th class="d-print-none">操作</th> -->
-            </tr>
-        </thead>
-        <!-- 内容区域：使用flask的for循环对传入的数据进行打印 -->
-        <tbody>           
-            {% for i in table %}
-            <tr class="align-bottom">
-                <!-- <td class="d-print-none">{{ i['ID'] }}</td> -->
-                <td >{{ i['物料名称'] }}</td>
-                <td class="text-wrap" style="width: 4rem;">{{ i['整支规格'] }}</td>
-                <td >{{ i['料号'] }}</td>
-                <td >{{ i['批号'] }}</td>
-                <td >{{ i['订单号'] }}</td>
-                <td >平方米</td>
-                <td >{{ i['数量'] }}</td>
-                <td >{{ i['备注'] }}</td>
-                <!-- <td id="td10"><button class="btn btn-primary d-print-none" >修改</button></td> -->
-            </tr>
-            {% endfor %}  
-        </tbody>
-    </table>
-    <!-- 打印区域-表尾 -->
-    <div class="mt-3 d-flex flex-row justify-content-between">
-        <label>核准:________________</label>
-        <label>发货:________________</label>
-        <label>制单:________________</label>
-        <label>客户签收:________________</label>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width: 18%">物料名称</th>
+                    <th style="width: 18%">整支规格</th>
+                    <th style="width: 12%">料号</th>
+                    <th style="width: 12%">批号</th>
+                    <th style="width: 12%">订单号</th>
+                    <th style="width: 8%">单位</th>
+                    <th style="width: 10%">数量</th>
+                    <th>分切规格</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in table %}
+                <tr>
+                    <td>{{ i['物料名称'] }}</td>
+                    <td style="font-size: 7.5pt;">{{ i['整支规格'] }}</td>
+                    <td>{{ i['料号'] }}</td>
+                    <td>{{ i['批号'] }}</td>
+                    <td>{{ i['订单号'] }}</td>
+                    <td>m²</td>
+                    <td>{{ i['数量'] }}</td>
+                    <td style="font-size: 7.5pt;">{{ i['备注'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="doc-footer">
+            <div class="sig-row">
+                <div>核准：__________</div>
+                <div>发货：__________</div>
+                <div>制单：罗丽春</div>
+                <div>客户签收：__________</div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
 
-
-
-
-<script src="../static/js/print.js"></script>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/print.js') }}"></script>
+{% endblock %}

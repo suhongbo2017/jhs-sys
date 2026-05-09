@@ -24,7 +24,8 @@ DB_SCHEMA_2023 = "AIS20230525154804.dbo" # 假设这个数据库是固定的，�
 def get_connection():
     """获取数据库连接"""
     try:
-        connection_string = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password};trustServerCertificate=yes;'
+        # 使用系统中已安装的 legacy "SQL Server" 驱动程序
+        connection_string = f'DRIVER={{SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password};'
         return pyodbc.connect(connection_string)
     except Exception as e:
         logger.error(f"数据库连接错误: {e}", exc_info=True)
@@ -48,12 +49,14 @@ def _handle_code_1(cursor, finter_id):
 
 # 辅助函数：处理 codeName = 2 的逻辑
 def _handle_code_2(cursor, finter_id):
-    sql2 = f"SELECT FEntrySelfS0257, FEntrySelfS0240, FEntrySelfS0258, FEntrySelfS0248, FEntrySelfS0239, FEntrySelfS0244, FEntrySelfS0263, FNote FROM {DB_SCHEMA_2019}.SEOutStockEntry WHERE FINTERID = ?"
+    sql2 = f"SELECT FEntrySelfS0257, FEntrySelfS0240, FEntrySelfS0258, FEntrySelfS0248, FEntrySelfS0239, FEntrySelfS0244, FEntrySelfS0263, FNote FROM {DB_SCHEMA_2019}.SEOutStockEntry WHERE FInterID = ?"
     cursor.execute(sql2, finter_id)
     rows1 = cursor.fetchall()
+    # 显式转换为列表格式，避免 pyodbc.Row 导致的 shape 识别问题
+    data1 = [[j for j in i] for i in rows1]
     # 为 codeName=2 定义明确的列名
     columns = ['物料名称', '整支规格', '料号', '批号', '订单号', '数量', '备注', '批次号']
-    dfs = pd.DataFrame(rows1, columns=columns)
+    dfs = pd.DataFrame(data1, columns=columns)
     dfs.reset_index(drop=False, inplace=True)
     dfs.index.name = 'ID'
     return dfs
