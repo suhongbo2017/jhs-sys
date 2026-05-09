@@ -111,6 +111,10 @@ def handle_print_request(request, code_name: int, template_name: str):
 def index():
     return render_template('index.html')
 
+@app.route('/qrcode')
+def show_qrcode():
+    return render_template('qrcode.html')
+
 @app.route('/date_tag/')
 def date_tag():
     return send_from_directory('date_tag', 'index.html')

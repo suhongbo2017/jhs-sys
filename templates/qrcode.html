@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block container %}
+<!-- Import qrcode.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<div class="container d-flex flex-column align-items-center justify-content-center mt-5">
+    
+    <!-- Creator UI -->
+    <div class="card shadow-sm p-4 w-100" style="max-width: 450px;" id="creator-ui">
+        <h2 class="text-center mb-4"><i class="bi bi-qr-code-scan text-primary me-2"></i>二维码生成器</h2>
+        
+        <div class="mb-3">
+            <input type="text" class="form-control form-control-lg" id="url-input" 
+                   placeholder="输入链接或文字..." value="https://www.google.com"
+                   onkeydown="if(event.key === 'Enter') createSecureQR()">
+        </div>
+        
+        <button class="btn btn-primary btn-lg w-100" onclick="createSecureQR()">生成二维码</button>
+        
+        <div id="qrcode" class="d-flex justify-content-center mt-4 p-2 bg-white rounded shadow-sm" style="min-height: 220px; outline: 1px dotted #ccc;"></div>
+        
+        <div class="d-flex gap-2 mt-4">
+            <button class="btn btn-success flex-fill" onclick="downloadQR('png')">
+                <i class="bi bi-image me-1"></i>下载 PNG
+            </button>
+            <button class="btn btn-info text-white flex-fill" onclick="downloadQR('jpeg')">
+                <i class="bi bi-file-image me-1"></i>下载 JPEG
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirm UI -->
+    <div class="card shadow-sm p-4 w-100 d-none" style="max-width: 450px;" id="confirm-ui">
+        <h2 class="text-center text-success mb-4"><i class="bi bi-check-circle-fill me-2"></i>扫码确认</h2>
+        <p id="target-display" class="fs-5 text-break text-center mb-4" style="line-height: 1.5;"></p>
+        <button id="action-btn" class="btn btn-primary btn-lg w-100"></button>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        // 从 URL 中获取 'data' 参数（支持中文）
+        const rawData = urlParams.get('data');
+
+        // --- 扫码后的逻辑 ---
+        if (rawData) {
+            document.getElementById('creator-ui').classList.add('d-none');
+            document.getElementById('confirm-ui').classList.remove('d-none');
+
+            const decodedData = decodeURIComponent(rawData);
+            const displayElement = document.getElementById('target-display');
+            const actionBtn = document.getElementById('action-btn');
+
+            // 判断是网址还是纯文本
+            if (decodedData.startsWith('http')) {
+                displayElement.innerHTML = `<strong>跳转链接：</strong><br><a href="${decodedData}">${decodedData}</a>`;
+                actionBtn.innerText = "确认前往";
+                actionBtn.onclick = () => window.location.href = decodedData;
+            } else {
+                displayElement.innerHTML = `<strong>扫描内容：</strong><br>${decodedData}`;
+                actionBtn.innerText = "已知晓";
+                actionBtn.onclick = () => alert("内容已确认");
+            }
+        } else {
+            // Initiate default QR code when loaded as creator
+            setTimeout(() => {
+                createSecureQR();
+            }, 100);
+        }
+    });
+
+    // --- 生成器的逻辑 ---
+    let qrcode = null;
+
+    function createSecureQR() {
+        let inputStr = document.getElementById("url-input").value.trim();
+        if (!inputStr) return alert("请输入内容");
+        
+        let qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = ""; // Clear existing QR
+
+        qrcode = new QRCode(qrContainer, {
+            text: inputStr,
+            width: 200,
+            height: 200,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+
+    function downloadQR(format) {
+        const qrcodeDiv = document.getElementById("qrcode");
+        let canvas = qrcodeDiv.querySelector("canvas");
+        let img = qrcodeDiv.querySelector("img");
+
+        let sourceToDraw = canvas || img;
+        if (!sourceToDraw) return alert("请先生成二维码！");
+
+        // Try to construct canvas from img if only img is available (due to older browser fallback by QRCode.js)
+        if (!canvas && img.src) {
+            canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth || 200;
+            canvas.height = img.naturalHeight || 200;
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            sourceToDraw = canvas;
+        }
+
+        let padding = 15;
+        let sourceWidth = canvas ? canvas.width : sourceToDraw.width;
+        let sourceHeight = canvas ? canvas.height : sourceToDraw.height;
+
+        let finalCanvas = document.createElement("canvas");
+        finalCanvas.width = sourceWidth + padding * 2;
+        finalCanvas.height = sourceHeight + padding * 2;
+
+        let ctx = finalCanvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        ctx.drawImage(sourceToDraw, padding, padding, sourceWidth, sourceHeight);
+
+        let dataUrl = format === 'jpeg' ? finalCanvas.toDataURL("image/jpeg", 1.0) : finalCanvas.toDataURL("image/png");
+
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = `qrcode.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+{% endblock %}

@@ -242,3 +242,115 @@ ValueError: too many values to unpack (expected 2)
 2026-04-27 16:24:25,987 - new_main - INFO - 合并后的内容: 4 rows
 2026-04-27 16:24:37,398 - new_main - INFO - 格式化输入单号：['JHS0101707']
 2026-04-27 16:24:37,407 - new_main - INFO - 合并后的内容: 6 rows
+2026-04-27 16:42:10,306 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:42:10,332 - new_main - INFO - 合并后的内容: 6 rows
+2026-04-27 16:42:13,440 - new_main - INFO - 格式化输入单号：['JHS0102814']
+2026-04-27 16:42:13,447 - new_main - INFO - 合并后的内容: 2 rows
+2026-04-27 16:43:23,523 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:43:23,623 - new_main - ERROR - 数据处理错误: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-04-27 16:43:23,624 - new_main - ERROR - Error in zhidongli route: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 200, in zhidongli
+    datas, seout_id = process_delivery_data(data, 2)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-04-27 16:43:26,296 - new_main - INFO - 格式化输入单号：['JHS0103830']
+2026-04-27 16:43:26,305 - new_main - ERROR - 数据处理错误: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-04-27 16:43:26,306 - new_main - ERROR - Error in zhidongli route: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 200, in zhidongli
+    datas, seout_id = process_delivery_data(data, 2)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-04-27 16:43:31,121 - new_main - INFO - 格式化输入单号：['JHS0101707']
+2026-04-27 16:43:31,132 - new_main - INFO - 合并后的内容: 4 rows
+2026-05-09 16:02:54,077 - new_main - INFO - 格式化输入单号：['JHS-2234']
+2026-05-09 16:02:54,226 - new_main - ERROR - 数据处理错误: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-05-09 16:02:54,230 - new_main - ERROR - Error in handle_print_request: No objects to concatenate
+Traceback (most recent call last):
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 97, in handle_print_request
+    datas, seout_id = process_delivery_data(data, code_name)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\new_main.py", line 78, in process_delivery_data
+    datas = pd.concat([df for df in results if not df.empty])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 382, in concat
+    op = _Concatenator(
+         ^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VSCODE\PYTHON3\system\.venv\Lib\site-packages\pandas\core\reshape\concat.py", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+2026-05-09 16:03:07,685 - new_main - INFO - 格式化输入单号：['JHS0102854']
+2026-05-09 16:03:07,697 - new_main - INFO - 合并后的内容: 1 rows
+2026-05-09 16:03:09,435 - new_main - INFO - 格式化输入单号：['JHS0102854']
+2026-05-09 16:03:09,445 - new_main - INFO - 合并后的内容: 1 rows
+2026-05-09 16:03:12,875 - new_main - INFO - 格式化输入单号：['JHS0102853']
+2026-05-09 16:03:12,885 - new_main - INFO - 合并后的内容: 1 rows
+2026-05-09 16:03:16,077 - new_main - INFO - 格式化输入单号：['JHS0102844']
+2026-05-09 16:03:16,087 - new_main - INFO - 合并后的内容: 1 rows
+2026-05-09 16:03:26,944 - new_main - INFO - 格式化输入单号：['JHS0102844']
+2026-05-09 16:03:26,952 - new_main - INFO - 合并后的内容: 1 rows
