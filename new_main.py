@@ -1,17 +1,16 @@
 # 导入所需的库
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, request, flash, redirect, url_for, abort, send_from_directory
-from werkzeug.utils import secure_filename
-from flask_bootstrap import Bootstrap # 修改为 flask_bootstrap---
+from flask import Flask, render_template, request, flash, send_from_directory
+from flask_bootstrap import Bootstrap4
 import server_connect
 import pandas as pd
-import secrets
 import os
-import re # 导入 re 模块
+import re
 from functools import wraps
-from typing import Optional, Tuple, List, Dict, Any
-from PyDeepLX import PyDeepLX as dx # 将 PyDeepLX 导入移到顶部
+import threading
+from typing import Optional, Tuple, List, Any
+from PyDeepLX import PyDeepLX as dx
 
 # 配置日志
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -27,20 +26,36 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
-# 应用配置
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', secrets.token_hex(16))
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'uploads')
-    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
+# 翻译器单例（延迟初始化，带线程锁）
+_translator = None
+_translator_lock = threading.Lock()
+def get_translator():
+    global _translator
+    if _translator is None:
+        with _translator_lock:
+            if _translator is None:  # 双重检查锁定
+                _translator = dx()
+    return _translator
 
+# ===== 应用工厂 =====
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
-    Bootstrap(app) # 修改为 Bootstrap(app)
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(16).hex())
+    app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
+    app.config['ALLOWED_EXTENSIONS'] = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-    # 确保上传目录存在
+    Bootstrap4(app)
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+    @app.errorhandler(404)
+    def not_found(e):
+        return render_template('error.html', error='页面未找到 (404)'), 404
+
+    @app.errorhandler(500)
+    def server_error(e):
+        logger.error(f"服务器内部错误: {e}", exc_info=True)
+        return render_template('error.html', error='服务器内部错误 (500)'), 500
 
     return app
 
@@ -106,7 +121,7 @@ def handle_print_request(request, code_name: int, template_name: str):
         flash(f"操作出错: {str(e)}", "error")
         return render_template(template_name)
 
-# 路由定义
+# ===== 路由定义 =====
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -127,40 +142,29 @@ def date_tag_view():
 def date_tag_static(path):
     return send_from_directory('date_tag', path)
 
-@app.route('/yunHaiPrint', methods=['GET', 'POST'])
-@handle_errors
-def yunHaiPrint():
-    return handle_print_request(request, 1, 'yunHaiPrint.html')
+@app.route('/bartender_tag/')
+def bartender_tag():
+    return render_template('tag_code2026.html')
 
-@app.route('/jinLiPrint', methods=['GET', 'POST'])
-@handle_errors
-def jinLiPrint():
-    return handle_print_request(request, 2, 'jinLiPrint.html')
+# 打印路由：动态注册（7 个路由合并为 1 个列表）
+_PRINT_ROUTES = [
+    ('yunHaiPrint', 1, 'yunHaiPrint.html'),
+    ('jinLiPrint', 2, 'jinLiPrint.html'),
+    ('jiuMaoPrint', 3, 'jiuMaoPrint.html'),
+    ('qianJi', 4, 'qianJi.html'),
+    ('tongtaiying', 5, 'tongtaiying.html'),
+    ('fengzhenchang', 6, 'fengzhenchang.html'),
+    ('fengzhenchang_copy', 6, 'fengzhenchang_copy.html'),
+]
 
-@app.route('/jiuMaoPrint', methods=['GET', 'POST'])
-@handle_errors
-def jiuMaoPrint():
-    return handle_print_request(request, 3, 'jiuMaoPrint.html')
-
-@app.route('/qianJi', methods=['GET', 'POST'])
-@handle_errors
-def qianJi():
-    return handle_print_request(request, 4, 'qianJi.html')
-
-@app.route('/tongtaiying', methods=['GET', 'POST'])
-@handle_errors
-def tongtaiying():
-    return handle_print_request(request, 5, 'tongtaiying.html')
-
-@app.route('/fengzhenchang', methods=['GET', 'POST'])
-@handle_errors
-def fengzhenchang():
-    return handle_print_request(request, 6, 'fengzhenchang.html')
-
-@app.route('/fengzhenchang_copy', methods=['GET', 'POST'])
-@handle_errors
-def fengzhenchang_copy():    # 修改函数名，避免重复
-    return handle_print_request(request, 6, 'fengzhenchang_copy.html')
+for _route_name, _code, _template in _PRINT_ROUTES:
+    def _make_handler(cn=_code, tmpl=_template, name=_route_name):
+        @handle_errors
+        def handler():
+            return handle_print_request(request, cn, tmpl)
+        handler.__name__ = name
+        return handler
+    app.add_url_rule(f'/{_route_name}', _route_name, _make_handler(), methods=['GET', 'POST'])
 # 智动力数据处理函数
 def process_zhidongli_data(datas: pd.DataFrame) -> pd.DataFrame:
     try:
@@ -317,7 +321,7 @@ def translate():
             
         logger.info(f"翻译请求 - 语言: {lang}, 文本: {strs}")
         
-        translator = dx()
+        translator = get_translator()
         result = translator.translate(strs, source_lang="auto", target_lang=lang)
         
         logger.info(f"翻译完成: {result}")

@@ -19,5 +19,8 @@ logs/
 # VS Code
 .vscode/
 
+# Environment variables (contains passwords)
+.env
+
 # Project specific
 uploads/

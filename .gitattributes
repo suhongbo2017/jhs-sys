@@ -1,0 +1,24 @@
+# Auto detect text files and enforce Windows-style line endings (*.bat)
+* text=auto
+
+# Batch files: always CRLF on Windows
+*.bat text eol=crlf
+
+# Shell scripts: always LF
+*.sh text eol=lf
+
+# Python files: auto (LF on checkout in Linux/Mac, CRLF on Windows)
+*.py text
+
+# HTML/CSS/JS/JSON/YAML: auto
+*.html text
+*.css text
+*.js text
+*.json text
+*.yml text
+*.yaml text
+
+# Requirements/toml/md: auto
+requirements.txt text
+*.md text
+*.toml text

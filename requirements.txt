@@ -1,0 +1,17 @@
+Flask==2.3.2
+Bootstrap-Flask==2.2.0
+pandas>=2.2
+pyodbc==4.0.39
+PyDeepLX==1.0.4
+waitress==3.0.0
+pywebview==4.3.2
+gunicorn==21.2.0
+SQLAlchemy==2.0.17
+mysql-connector-python==8.1.0
+python-docx
+python-pptx
+xlsxwriter
+openpyxl
+pdfplumber
+reportlab
+PyMuPDF

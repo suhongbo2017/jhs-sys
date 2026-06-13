@@ -5,10 +5,8 @@ services:
       - "8080:8080"
     volumes:
       - .:/app
+    env_file:
+      - .env
     environment:
       - DEV_MODE=False  # 关闭开发模式，使用实际数据库连接
-      - DB_SERVER=192.168.0.234
-      - DB_DATABASE=AIS20191210135722
-      - DB_USERNAME=sa
-      - DB_PASSWORD=Jhs16888
     restart: unless-stopped

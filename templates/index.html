@@ -1,110 +1,308 @@
 {% include 'base.html' %}
 
 {% block container %}
-<div class="container-fluid px-4 py-4" style="max-width: 1400px;">
-    <div class="text-center mb-4">
-        <h1 class="display-5 fw-bold text-primary mb-3">欢迎使用金恒晟业务系统</h1>
-        <p class="lead text-muted">高效、智能的新材料业务管理平台</p>
+<style>
+  :root {
+    --card-icon-size: 56px;
+  }
+  .hero-section {
+    position: relative;
+    padding: 3rem 0 2rem;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(2,132,199,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-title {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+  }
+  .hero-sub {
+    color: #94a3b8;
+    font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+    margin-bottom: 0;
+  }
+  .hero-divider {
+    width: 60px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--primary-blue), #7dd3fc);
+    margin: 0.8rem auto 0;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    padding: 0.5rem 0;
+  }
+
+  .card-mod {
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(2,132,199,0.04);
+    transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    background: var(--bs-card-bg, #fff);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-mod:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(2,132,199,0.10), 0 2px 8px rgba(0,0,0,0.06);
+    border-color: rgba(2,132,199,0.12);
+  }
+
+  [data-bs-theme="dark"] .card-mod {
+    border-color: rgba(255,255,255,0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 12px rgba(2,132,199,0.06);
+  }
+  [data-bs-theme="dark"] .card-mod:hover {
+    border-color: rgba(56,189,248,0.15);
+    box-shadow: 0 8px 25px rgba(56,189,248,0.08), 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .card-mod-body {
+    padding: 1.5rem 1.5rem 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-icon-wrap {
+    width: var(--card-icon-size);
+    height: var(--card-icon-size);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+  .card-mod:hover .card-icon-wrap {
+    transform: scale(1.08);
+  }
+
+  .card-icon-blue   { background: rgba(2,132,199,0.10); color: #0284c7; }
+  .card-icon-indigo { background: rgba(99,102,241,0.10); color: #6366f1; }
+  .card-icon-teal   { background: rgba(20,184,166,0.10); color: #14b8a6; }
+  .card-icon-amber  { background: rgba(245,158,11,0.10); color: #f59e0b; }
+  .card-icon-rose   { background: rgba(244,63,94,0.10); color: #f43f5e; }
+  .card-icon-violet { background: rgba(139,92,246,0.10); color: #8b5cf6; }
+
+  [data-bs-theme="dark"] .card-icon-blue   { background: rgba(56,189,248,0.12); color: #38bdf8; }
+  [data-bs-theme="dark"] .card-icon-indigo { background: rgba(129,140,248,0.12); color: #818cf8; }
+  [data-bs-theme="dark"] .card-icon-teal   { background: rgba(45,212,191,0.12); color: #2dd4bf; }
+  [data-bs-theme="dark"] .card-icon-amber  { background: rgba(251,191,36,0.12);  color: #fbbf24; }
+  [data-bs-theme="dark"] .card-icon-rose   { background: rgba(251,113,133,0.12); color: #fb7185; }
+  [data-bs-theme="dark"] .card-icon-violet { background: rgba(167,139,250,0.12); color: #a78bfa; }
+
+  .card-mod-title {
+    font-size: 1.1rem;
+    font-weight: 650;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+  }
+  .card-mod-desc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.55;
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+
+  .card-mod-actions {
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .btn-sleek {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 9px;
+    font-size: 0.85rem;
+    font-weight: 550;
+    border: 1.5px solid rgba(2,132,199,0.15);
+    color: var(--primary-blue);
+    background: transparent;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    width: 100%;
+  }
+  .btn-sleek:hover {
+    background: rgba(2,132,199,0.08);
+    border-color: rgba(2,132,199,0.3);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+  }
+  [data-bs-theme="dark"] .btn-sleek {
+    border-color: rgba(56,189,248,0.2);
+    color: #38bdf8;
+  }
+  [data-bs-theme="dark"] .btn-sleek:hover {
+    background: rgba(56,189,248,0.10);
+    border-color: rgba(56,189,248,0.35);
+  }
+
+  .btn-sleek-solid {
+    background: var(--primary-blue);
+    color: #fff !important;
+    border-color: var(--primary-blue);
+  }
+  .btn-sleek-solid:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #fff !important;
+  }
+  [data-bs-theme="dark"] .btn-sleek-solid {
+    background: #38bdf8;
+    border-color: #38bdf8;
+    color: #0f172a !important;
+  }
+  [data-bs-theme="dark"] .btn-sleek-solid:hover {
+    background: #7dd3fc;
+    border-color: #7dd3fc;
+  }
+
+  .footer-bar {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    text-align: center;
+  }
+  [data-bs-theme="dark"] .footer-bar {
+    border-top-color: rgba(255,255,255,0.06);
+  }
+  .footer-bar p {
+    font-size: 0.78rem;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 576px) {
+    .card-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .card-mod-body {
+      padding: 1.2rem;
+    }
+  }
+</style>
+
+<div class="container-fluid px-3 px-md-4 py-3" style="max-width: 1200px;">
+  <!-- Hero -->
+  <div class="hero-section">
+    <h1 class="hero-title">金恒晟业务系统</h1>
+    <p class="hero-sub">高效 · 智能 · 新材料业务管理平台</p>
+    <div class="hero-divider"></div>
+  </div>
+
+  <!-- Cards -->
+  <div class="card-grid">
+    <!-- 1. 物料智能查询 -->
+    <div class="card-mod">
+      <div class="card-mod-body">
+        <div class="card-icon-wrap card-icon-blue"><i class="bi bi-search"></i></div>
+        <h3 class="card-mod-title">物料智能查询</h3>
+        <p class="card-mod-desc">快速检索库存物料信息，支持多条件过滤与实时库存查看，提高仓储与领料效率。</p>
+        <div class="card-mod-actions">
+          <a href="/queryMaterial" class="btn-sleek btn-sleek-solid">开始查询 <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
     </div>
 
-    <div class="row g-4 justify-content-center">
-        <!-- 月份标签设计卡片 -->
-        <div class="col-12 col-sm-6 col-md-6 col-xl-3">
-            <div class="card h-100 p-3">
-                <div class="card-body d-flex flex-column">
-                    <div class="mb-4">
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block">
-                            <i class="bi bi-tags-fill text-primary fs-2"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title h4 fw-bold">月份标签打印</h3>
-                    <p class="card-text text-secondary mb-4">
-                        专业的日期与月份标签在线设计工具，支持多种尺寸（40mm-80mm）和排版方案，实时预览，一键打印。
-                    </p>
-                    <div class="mt-auto">
-                        <a href="/date_tag_view" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
-                            <span>进入设计器</span>
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <!-- 2. Bartender 字段代码 -->
+    <div class="card-mod">
+      <div class="card-mod-body">
+        <div class="card-icon-wrap card-icon-indigo"><i class="bi bi-upc-scan"></i></div>
+        <h3 class="card-mod-title">BarTender 字段代码</h3>
+        <p class="card-mod-desc">条码打印标签字段定义查询，搜索中文名、英文代码，支持排序与自定义新增字段。</p>
+        <div class="card-mod-actions">
+          <a href="/bartender_tag/" class="btn-sleek">进入查询 <i class="bi bi-arrow-right"></i></a>
         </div>
-
-        <!-- 物料查询卡片 -->
-        <div class="col-12 col-sm-6 col-md-6 col-xl-3">
-            <div class="card h-100 p-3">
-                <div class="card-body d-flex flex-column">
-                    <div class="mb-4">
-                        <div class="bg-info bg-opacity-10 p-3 rounded-circle d-inline-block">
-                            <i class="bi bi-search text-info fs-2"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title h4 fw-bold">物料智能查询</h3>
-                    <p class="card-text text-secondary mb-4">
-                        快速检索库存物料信息，支持多条件过滤与实时库存查看，极大提高仓储与领料效率。
-                    </p>
-                    <div class="mt-auto">
-                        <a href="/queryMaterial" class="btn btn-outline-primary w-100">开始查询</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PFD工具箱卡片 -->
-        <div class="col-12 col-sm-6 col-md-6 col-xl-3">
-            <div class="card h-100 p-3">
-                <div class="card-body d-flex flex-column">
-                    <div class="mb-4">
-                        <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block">
-                            <i class="bi bi-tools text-success fs-2"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title h4 fw-bold">PFD工具箱</h3>
-                    <p class="card-text text-secondary mb-4">
-                        访问外部工具系统界面，进行更全面的业务操作辅助。
-                    </p>
-                    <div class="mt-auto">
-                        <a href="http://192.168.30.1:8031" target="_blank" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2">
-                            <span>打开工具箱</span>
-                            <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 共享云盘卡片 -->
-        <div class="col-12 col-sm-6 col-md-6 col-xl-3">
-            <div class="card h-100 p-3">
-                <div class="card-body d-flex flex-column">
-                    <div class="mb-4">
-                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-block">
-                            <i class="bi bi-cloud-arrow-up-fill text-warning fs-2"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title h4 fw-bold">共享云盘</h3>
-                    <p class="card-text text-secondary mb-4">
-                        访问内部私有云盘，便捷进行企业文档、系统的存取与多人共享协作。
-                    </p>
-                    <div class="mt-auto">
-                        <a href="http://192.168.30.1:5212" target="_blank" class="btn btn-warning fw-medium text-dark w-100 d-flex align-items-center justify-content-center gap-2">
-                            <span>访问云盘</span>
-                            <i class="bi bi-box-arrow-up-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- 底部状态栏 -->
-    <div class="row mt-5 pt-4 border-top">
-        <div class="col-12 text-center">
-            <p class="text-muted small mb-0">
-                &copy; 2026 金恒晟新材料科技有限公司 | 系统版本 v1.1.0 (2026-05-09)
-            </p>
+    <!-- 3. 二维码生成 -->
+    <div class="card-mod">
+      <div class="card-mod-body">
+        <div class="card-icon-wrap card-icon-teal"><i class="bi bi-qr-code"></i></div>
+        <h3 class="card-mod-title">二维码生成</h3>
+        <p class="card-mod-desc">在线生成二维码，支持自定义内容与尺寸，快捷输出扫码图片。</p>
+        <div class="card-mod-actions">
+          <a href="/qrcode" class="btn-sleek">开始生成 <i class="bi bi-arrow-right"></i></a>
         </div>
+      </div>
     </div>
+
+    <!-- 4. 日期标签设计 -->
+    <div class="card-mod">
+      <div class="card-mod-body">
+        <div class="card-icon-wrap card-icon-amber"><i class="bi bi-calendar-date"></i></div>
+        <h3 class="card-mod-title">日期标签设计</h3>
+        <p class="card-mod-desc">多尺寸日期标签在线设计，支持实时预览与套打模板选择，一键打印输出。</p>
+        <div class="card-mod-actions">
+          <a href="/date_tag_view" class="btn-sleek">进入设计器 <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 打印模板 -->
+    <div class="card-mod">
+      <div class="card-mod-body">
+        <div class="card-icon-wrap card-icon-rose"><i class="bi bi-printer"></i></div>
+        <h3 class="card-mod-title">打印模板</h3>
+        <p class="card-mod-desc">云海、九茂、丰正昌等多套条码打印模板，适配不同客户标签格式需求。</p>
+        <div class="card-mod-actions">
+          <a href="/yunHaiPrint" class="btn-sleek">选择模板 <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. 共享云盘 -->
+    <div class="card-mod">
+      <div class="card-mod-body">
+        <div class="card-icon-wrap card-icon-violet"><i class="bi bi-cloud-arrow-up"></i></div>
+        <h3 class="card-mod-title">共享云盘</h3>
+        <p class="card-mod-desc">访问内部私有云盘，便捷进行企业文档、系统的存取与多人共享协作。</p>
+        <div class="card-mod-actions">
+          <a href="http://192.168.30.1:5212" target="_blank" class="btn-sleek">访问云盘 <i class="bi bi-box-arrow-up-right"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. PDF工具箱 -->
+    <div class="card-mod">
+      <div class="card-mod-body">
+        <div class="card-icon-wrap card-icon-blue"><i class="bi bi-tools"></i></div>
+        <h3 class="card-mod-title">PDF工具箱</h3>
+        <p class="card-mod-desc">PDF文件处理工具，支持合并、拆分、压缩等操作，提高文档处理效率。</p>
+        <div class="card-mod-actions">
+          <a href="http://192.168.30.1:8031" target="_blank" class="btn-sleek">打开工具箱 <i class="bi bi-box-arrow-up-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-bar">
+    <p>&copy; 2026 金恒晟新材料科技有限公司 &nbsp;·&nbsp; 系统版本 v1.1.0</p>
+  </div>
 </div>
 {% endblock %}

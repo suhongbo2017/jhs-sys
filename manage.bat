@@ -1,12 +1,9 @@
-@echo off
-:: 设置字符集为 UTF-8 解决乱码
+﻿@echo off
 chcp 65001 >nul
-setlocal enabledelayedexpansion
 
-:: 设置项目信息
 set APP_NAME=jhs-system
 set SCRIPT_NAME=wsgi.py
-set INTERPRETER=.\.venv\Scripts\python.exe
+set INTERPRETER=%~dp0.venv\Scripts\pythonw.exe
 
 :MENU
 cls
@@ -22,7 +19,7 @@ echo  6. 删除/关闭任务 (Delete)
 echo  7. 保存开机自启 (Save)
 echo  8. 退出 (Exit)
 echo ==========================================
-set /p choice=请输入数字选择操作: 
+set /p choice=请输入数字选择操作:
 
 if "%choice%"=="1" goto START
 if "%choice%"=="2" goto STOP
@@ -36,19 +33,27 @@ goto MENU
 
 :START
 echo 正在启动服务...
-pm2 start %SCRIPT_NAME% --name "%APP_NAME%" --interpreter "%INTERPRETER%"
+pm2 start %SCRIPT_NAME% --name "%APP_NAME%" --interpreter "%INTERPRETER%" --update-env
+if errorlevel 1 (
+    echo PM2 启动失败，请检查上面的错误信息。
+    pause
+    goto MENU
+)
+pm2 save
+echo.
+echo 服务启动成功！可用选项 4 查看状态，选项 5 查看日志。
 pause
 goto MENU
 
 :STOP
-echo 正在停止服务 (暂停)...
+echo 正在停止服务...
 pm2 stop %APP_NAME%
 pause
 goto MENU
 
 :RESTART
 echo 正在重启服务...
-pm2 restart %APP_NAME%
+pm2 restart %APP_NAME% --update-env
 pause
 goto MENU
 
@@ -69,8 +74,8 @@ pause
 goto MENU
 
 :SAVE
-echo 正在保存当前列表以实现开机自启...
 pm2 save
+echo 已保存当前进程列表以实现开机自启。
 pause
 goto MENU
 
