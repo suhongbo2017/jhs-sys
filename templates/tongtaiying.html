@@ -53,7 +53,7 @@
         padding: 10mm;
         box-sizing: border-box;
         color: #000;
-        font-family: "SimSun", serif;
+        font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
     }
 
     /* 表格样式 */
@@ -93,7 +93,7 @@
     /* 页脚样式 */
     .doc-footer { margin-top: 5mm; font-size: 9.5pt; }
     .sig-row { display: flex; justify-content: space-between; margin-bottom: 4mm; }
-    .copy-tags { display: flex; justify-content: space-between; font-size: 8pt; color: #666; border-top: 1px dashed #ccc; pt: 2mm; }
+    .copy-tags { display: flex; justify-content: space-between; font-size: 8pt; color: #000; border-top: 1px dashed #ccc; pt: 2mm; }
 
     /* 强力修复空白页方案 */
     @media print {
@@ -200,7 +200,7 @@
                     </tr>
                     {% endfor %}
                 {% else %}
-                    <tr><td colspan="7" style="height: 40mm; color: #ccc;">暂无数据</td></tr>
+                    <tr><td colspan="7" style="height: 40mm; color: #000;">暂无数据</td></tr>
                 {% endif %}
             </tbody>
         </table>
