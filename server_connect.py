@@ -48,7 +48,7 @@ def get_connection():
         )
 
     parts = [
-        f'DRIVER={{{driver}}}',
+        f'DRIVER={{{driver}}};',
         f'SERVER={server};DATABASE={database};',
         f'UID={username};PWD={password};',
     ]
