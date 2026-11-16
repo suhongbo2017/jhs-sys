@@ -1,43 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="/static/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/bootstrap-icons.min.css">
-<link rel="stylesheet" href="../static/css/base.css">
-<script>
-    (() => {
-        'use strict'
-        const getStoredTheme = () => localStorage.getItem('theme')
-        const getPreferredTheme = () => {
-            const storedTheme = getStoredTheme()
-            if (storedTheme) return storedTheme
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
-        const setTheme = theme => {
-            document.documentElement.setAttribute('data-bs-theme', theme)
-        }
-        setTheme(getPreferredTheme())
-    })()
-</script>
-<title>Bartender 字段代码查询 - 2023</title>
+{% extends "base.html" %}
+
+{% block head %}
 <style>
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body {
-    height: 100%;
-    overflow: hidden;
-  }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
-    margin: 0;
-    padding: 20px 24px;
-    background: #f0f2f5;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    padding-top: 0;
-  }
+*, *::before, *::after { box-sizing: border-box; }
+  
+  
   .container {
     max-width: 1200px;
     width: 100%;
@@ -185,7 +152,7 @@
   }
   th.sort-asc .sort-arrow, th.sort-desc .sort-arrow { opacity: 1; }
   th.col-index { width: 50px; text-align: center; }
-  th.col-freq { width: 80px; text-align: center; }
+  th.col-freq { width: 104px; text-align: center; }
   td {
     padding: 10px 16px;
     border-bottom: 1px solid #f0f0f0;
@@ -194,6 +161,7 @@
   td.col-freq { text-align: center; }
   .freq-badge {
     display: inline-block;
+    white-space: nowrap;
     padding: 2px 10px;
     border-radius: 20px;
     font-size: 12px;
@@ -374,20 +342,77 @@
     .controls { flex-direction: column; }
     .stat { margin-left: 0; }
   }
-</style>
-</head>
-<body>
-{% include "nav.html" %}
-<div class="container">
-  <div class="header-area">
-  <h1>
-    🏷️ Bartender 字段代码表
-    <small>2023</small>
-  </h1>
-  <p class="subtitle">条码打印标签字段定义，支持中文名 / 英文代码 / 描述搜索</p>
-  </div>
 
-  <div class="controls">
+  /* ===== 接入全站视觉系统（theme.css） ===== */
+  html, body { height: auto; overflow: visible; }
+  body { background: transparent !important; padding: 0 !important; display: block !important; color: var(--ink-2); }
+  .container { max-width: none; }
+  h1 { font-size: 1.85rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+  h1 small { color: var(--muted-2); }
+  .subtitle { color: var(--muted); }
+  .search-box input {
+    height: 54px; border-radius: var(--r-pill); border-color: var(--line);
+    background: var(--surface); box-shadow: var(--sh-card); padding-left: 46px;
+    color: var(--ink); font-size: .93rem;
+  }
+  .search-box input:focus { border-color: rgba(59,110,245,.45); box-shadow: 0 0 0 4px rgba(59,110,245,.10); }
+  .search-box .icon { left: 18px; }
+  .filter-btn {
+    border-radius: var(--r-pill); border-color: var(--line); background: var(--surface);
+    color: var(--muted); font-weight: 650; box-shadow: var(--sh-card); padding: 10px 20px;
+  }
+  .filter-btn:hover { border-color: transparent; color: var(--blue); background: var(--blue-100); }
+  .filter-btn.active {
+    background: linear-gradient(135deg, #5b8cf8, var(--blue)); color: #fff;
+    border-color: transparent; box-shadow: var(--sh-blue);
+  }
+  .btn-primary {
+    border-radius: var(--r-pill); background: linear-gradient(135deg, #5b8cf8, var(--blue));
+    box-shadow: var(--sh-blue); font-weight: 700; padding: 10px 22px;
+  }
+  .btn-primary:hover { filter: brightness(1.05); background: linear-gradient(135deg, #5b8cf8, var(--blue)); }
+  .table-wrap {
+    background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--sh-card);
+    border: 1px solid var(--line); max-height: 62vh;
+  }
+  thead { background: var(--surface-2); }
+  th {
+    color: var(--muted); font-size: .74rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; border-bottom: 1px solid var(--line); padding: 15px 18px;
+  }
+  th:hover { color: var(--blue); }
+  td { padding: 13px 18px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+  tr:hover td { background: rgba(59,110,245,.04); }
+  .en-code { color: var(--blue); }
+  .desc-text { color: var(--muted); }
+  .freq-1 { background: #e9f9f1; color: #12744e; }
+  .freq-0 { background: #fff8e8; color: #8a5a00; }
+  .tag { background: var(--blue-100); color: var(--blue); border-radius: 8px; }
+  .tag:hover { background: rgba(59,110,245,.16); }
+  footer { color: var(--muted-2); }
+  .modal { border-radius: var(--r-lg); box-shadow: var(--sh-soft); }
+  [data-bs-theme="dark"] thead { background: var(--surface-2); }
+  [data-bs-theme="dark"] .search-box input,
+  [data-bs-theme="dark"] .filter-btn { background: var(--surface); }
+
+</style>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar">
+  <div class="page-head">
+    <h1>BarTender 字段代码</h1>
+    <p class="sub">条码打印标签字段定义 · 支持中文名 / 英文代码 / 描述搜索</p>
+  </div>
+  <div class="top-actions">
+    <span class="chip"><i class="bi bi-upc-scan"></i>字段表 2023</span>
+  </div>
+</div>
+{% endblock %}
+
+{% block container %}
+<div class="container">
+<div class="controls">
     <div class="search-box">
       <span class="icon">🔍</span>
       <input type="text" id="searchInput" placeholder="搜索中文名、英文代码、描述…" autofocus>
@@ -454,7 +479,9 @@
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
+{% endblock %}
 
+{% block scripts %}
 <script>
 // --- 数据持久化 ---
 function loadData() {
@@ -776,7 +803,6 @@ ths.forEach(th => {
 });
 
 render();
+
 </script>
-<script src="/static/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

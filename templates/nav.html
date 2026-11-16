@@ -1,90 +1,99 @@
-<nav class="navbar navbar-expand-lg sticky-top d-print-none">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center me-4" href="/">
-            <img src="/static/img/LOGO英文原文件-removebg-preview.ico" style="height: 40px;" class="me-2" alt="Logo">
-            <span class="fs-5 fw-bold text-primary d-none d-sm-inline">金恒晟系统</span>
+<aside class="side-rail d-print-none">
+    <a href="/" class="rail-logo" data-label="主页" title="金恒晟系统">
+        <i class="bi bi-grid-1x2-fill"></i>
+    </a>
+
+    <nav class="rail-nav">
+        <a href="/" class="rail-item" data-label="主页" data-match="/">
+            <i class="bi bi-house-door"></i>
         </a>
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-            <span class="navbar-toggler-icon"></span>
+        <a href="/queryMaterial" class="rail-item" data-label="物料查询" data-match="/queryMaterial">
+            <i class="bi bi-search"></i>
+        </a>
+        <a href="/LSMqueryMaterial" class="rail-item" data-label="LSM 物料查询" data-match="/LSMqueryMaterial">
+            <i class="bi bi-archive"></i>
+        </a>
+
+        <button type="button" class="rail-item" id="rail-print-btn" data-label="打印模板"
+                data-match="/yunHaiPrint,/jinLiPrint,/jiuMaoPrint,/qianJi,/tongtaiying,/fengzhenchang,/fengzhenchang_copy,/zhidongli">
+            <i class="bi bi-printer"></i>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarMain">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a href="/" class="nav-link px-3">主页</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/LSMqueryMaterial" class="nav-link px-3">LSM查询</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/queryMaterial" class="nav-link px-3">物料查询</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/date_tag_view" class="nav-link px-3">月份标签</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/qrcode" class="nav-link px-3">二维码生成</a>
-                </li>
-                <li class="nav-item dropdown ms-lg-2">
-                    <a class="nav-link dropdown-toggle px-3" href="#" id="printDropdown" role="button" data-bs-toggle="dropdown">
-                        打印模板
-                    </a>
-                    <ul class="dropdown-menu border-0 shadow-sm">
-                        <li><a class="dropdown-item" href="/yunHaiPrint">云海模板</a></li>
-                        <li><a class="dropdown-item" href="/jiuMaoPrint">九茂模板</a></li>
-                        <li><a class="dropdown-item" href="/zhidongli">智动力</a></li>
-                        <li><a class="dropdown-item" href="/tongtaiying">通泰盈</a></li>
-                        <li><a class="dropdown-item" href="/fengzhenchang">丰正昌</a></li>
-                        <li><a class="dropdown-item" href="/fengzhenchang_copy">丰正昌2</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item disabled" href="#">更多敬请期待</a></li>
-                    </ul>
-                </li>
-            </ul>
-            
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-light rounded-circle shadow-sm" id="theme-toggle-btn" onclick="toggleTheme()" title="切换模式">
-                    <i class="bi bi-sun-fill" id="theme-icon"></i>
-                </button>
-            </div>
-        </div>
+        <a href="/bartender_tag/" class="rail-item" data-label="BarTender 字段" data-match="/bartender_tag">
+            <i class="bi bi-upc-scan"></i>
+        </a>
+        <a href="/date_tag_view" class="rail-item" data-label="月份标签设计" data-match="/date_tag">
+            <i class="bi bi-calendar-date"></i>
+        </a>
+        <a href="/qrcode" class="rail-item" data-label="二维码生成" data-match="/qrcode">
+            <i class="bi bi-qr-code"></i>
+        </a>
+        <a href="/translate" class="rail-item" data-label="翻译工具" data-match="/translate">
+            <i class="bi bi-translate"></i>
+        </a>
+    </nav>
+
+    <div class="rail-foot">
+        <button type="button" class="rail-item" id="theme-toggle-btn" data-label="切换深浅色">
+            <i class="bi bi-moon-stars" id="theme-icon"></i>
+        </button>
     </div>
-</nav>
+</aside>
+
+<!-- 打印模板飞出面板 -->
+<div class="rail-flyout" id="rail-print-flyout">
+    <div class="flyout-title">打印模板</div>
+    <a href="/yunHaiPrint"><i class="bi bi-file-earmark-text"></i>云海模板</a>
+    <a href="/jinLiPrint"><i class="bi bi-file-earmark-text"></i>金力模板</a>
+    <a href="/jiuMaoPrint"><i class="bi bi-file-earmark-text"></i>九茂模板</a>
+    <a href="/qianJi"><i class="bi bi-file-earmark-text"></i>千骥模板</a>
+    <a href="/tongtaiying"><i class="bi bi-file-earmark-text"></i>同泰盈模板</a>
+    <a href="/fengzhenchang"><i class="bi bi-file-earmark-text"></i>丰正昌模板</a>
+    <a href="/fengzhenchang_copy"><i class="bi bi-file-earmark-text"></i>丰正昌模板 2</a>
+    <a href="/zhidongli"><i class="bi bi-file-earmark-text"></i>智动力模板</a>
+</div>
 
 <script>
-    function toggleTheme() {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-bs-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        html.setAttribute('data-bs-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme);
-    }
-
-    function updateThemeIcon(theme) {
+    (function () {
+        // ---- 主题切换 ----
         const icon = document.getElementById('theme-icon');
-        const btn = document.getElementById('theme-toggle-btn');
-        if (theme === 'dark') {
-            icon.className = 'bi bi-moon-stars-fill text-info';
-            btn.className = 'btn btn-dark rounded-circle shadow-sm';
-        } else {
-            icon.className = 'bi bi-sun-fill text-warning';
-            btn.className = 'btn btn-light rounded-circle shadow-sm';
+        function paintIcon(theme) {
+            if (!icon) return;
+            icon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars';
         }
-    }
+        paintIcon(document.documentElement.getAttribute('data-bs-theme') || 'light');
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const theme = document.documentElement.getAttribute('data-bs-theme') || 'light';
-        updateThemeIcon(theme);
-        
-        // Active link highlighting
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.nav-link').forEach(link => {
-            if (link.getAttribute('href') === currentPath) {
-                link.classList.add('active');
+        document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
+            const html = document.documentElement;
+            const next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', next);
+            localStorage.setItem('theme', next);
+            paintIcon(next);
+        });
+
+        // ---- 当前页高亮 ----
+        const path = window.location.pathname;
+        document.querySelectorAll('.rail-item[data-match]').forEach(el => {
+            const matches = el.dataset.match.split(',').map(s => s.trim());
+            if (matches.some(m => m === path || (m !== '/' && path.startsWith(m)))) {
+                el.classList.add('active');
             }
         });
-    });
+
+        // ---- 打印模板飞出面板 ----
+        const btn = document.getElementById('rail-print-btn');
+        const flyout = document.getElementById('rail-print-flyout');
+        function closeFlyout() { flyout.classList.remove('open'); }
+        btn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const rect = btn.getBoundingClientRect();
+            const willOpen = !flyout.classList.contains('open');
+            flyout.style.top = Math.min(rect.top, window.innerHeight - flyout.offsetHeight - 20) + 'px';
+            flyout.classList.toggle('open', willOpen);
+        });
+        document.addEventListener('click', (e) => {
+            if (!flyout.contains(e.target) && e.target !== btn) closeFlyout();
+        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFlyout(); });
+    })();
 </script>

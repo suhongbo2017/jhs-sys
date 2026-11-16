@@ -130,7 +130,9 @@ def handle_print_request(request, code_name: int, template_name: str):
     try:
         data = request.form.get("inputEntry")
         if not data:
-            flash('请输入查询内容', 'warning')
+            # 仅 POST 时提示，GET 直接访问保持页面干净
+            if request.method == 'POST':
+                flash('请输入查询内容', 'warning')
             return render_template(template_name)
             
         datas, seout_id = process_delivery_data(data, code_name)
@@ -238,7 +240,8 @@ def zhidongli():
     try:
         data = request.form.get("inputEntry")
         if not data:
-            flash('请输入查询内容', 'warning')
+            if request.method == 'POST':
+                flash('请输入查询内容', 'warning')
             return render_template('zhidongli.html')
             
         datas, seout_id = process_delivery_data(data, 2)
@@ -290,15 +293,15 @@ def queryMaterial():
         
         if result.empty:
             logger.warning(f"未查询到数据: {q_data}")
-            flash('未查询到数据，请检查输入', 'warning')
-            return render_template('queryMaterial.html')
+            # 提示显示在下方查询结果区域内（不再用顶部 flash）
+            return render_template('queryMaterial.html',
+                                   message='未查询到数据，请检查输入')
             
         logger.info(f"{query_type}成功: {result.shape[0]} 条记录")
         return render_template('queryMaterial.html', datas=result.iterrows())
     except ValueError as ve:
         logger.warning(f"查询格式错误: {str(ve)}")
-        flash(str(ve), 'warning')
-        return render_template('queryMaterial.html')
+        return render_template('queryMaterial.html', message=str(ve))
     except Exception as e:
         logger.error(f"Error in queryMaterial: {str(e)}", exc_info=True)
         flash('查询出错，详情请查看服务日志', "error")
@@ -317,15 +320,15 @@ def LSMqueryMaterial():
         
         if result.empty:
             logger.warning(f"LSM未查询到数据: {q_data}")
-            flash('未查询到数据，请检查输入', 'warning')
-            return render_template('LSMqueryMaterial.html')
+            # 提示显示在下方查询结果区域内（不再用顶部 flash）
+            return render_template('LSMqueryMaterial.html',
+                                   message='未查询到数据，请检查输入')
             
         logger.info(f"LSM{query_type}成功: {result.shape[0]} 条记录")
         return render_template('LSMqueryMaterial.html', datas=result.iterrows())
     except ValueError as ve:
         logger.warning(f"LSM查询格式错误: {str(ve)}")
-        flash(str(ve), 'warning')
-        return render_template('LSMqueryMaterial.html')
+        return render_template('LSMqueryMaterial.html', message=str(ve))
     except Exception as e:
         logger.error(f"Error in LSMqueryMaterial: {str(e)}", exc_info=True)
         flash('查询出错，详情请查看服务日志', "error")
@@ -349,7 +352,7 @@ def translate():
         result = translator.translate(strs, source_lang="auto", target_lang=lang)
         
         logger.info(f"翻译完成: {result}")
-        return render_template('translate.html', result=result)
+        return render_template('translate.html', result=result, strs=strs)
     except Exception as e:
         logger.error(f"翻译错误: {str(e)}", exc_info=True)
         flash('翻译出错，详情请查看服务日志', "error")

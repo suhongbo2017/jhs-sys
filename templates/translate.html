@@ -1,39 +1,68 @@
-{% include 'base.html' %}
-{% block input %}
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  .tx-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: stretch; }
+  .tx-card { display: flex; flex-direction: column; }
+  .tx-card .card-title-mod { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .tx-area {
+    flex: 1 1 auto;
+    min-height: 300px;
+    resize: vertical;
+    border-radius: var(--r-md);
+    border: 1px solid var(--line-2);
+    background: var(--surface-2);
+    padding: 16px 18px;
+    font-size: .92rem;
+    line-height: 1.7;
+    color: var(--ink-2);
+    outline: 0;
+    width: 100%;
+  }
+  .tx-area:focus { border-color: rgba(59,110,245,.45); box-shadow: 0 0 0 4px rgba(59,110,245,.10); background: var(--surface); }
+  .tx-area[readonly] { background: var(--blue-100); color: var(--ink); }
+  .tx-mid { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .tx-lang { min-width: 132px; text-align: center; }
+  @media (max-width: 991px) {
+    .tx-grid { grid-template-columns: 1fr; }
+    .tx-mid { flex-direction: row; justify-content: center; }
+  }
+</style>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar">
+  <div class="page-head">
+    <h1>翻译工具</h1>
+    <p class="sub">中英互译 · 基于 DeepLX 引擎</p>
+  </div>
+</div>
 {% endblock %}
 
 {% block queryRow %}
-<div class="d-flex flex-column align-items-center mt-5">
-    <div class="inputDate ">
-        <form action="#" method="post" class="d-flex flex-column align-items-center">
-            <textarea name="translate" id="translate" cols="150" rows="10" placeholder="输入要翻译的文本">{{ strs }}</textarea>
-            <select name="lang" id="lang" style="width: 100px; height: 30px;background: rgb(185, 185, 247);color: rgb(14, 14, 14);font-family: '黑体';">
-                <option value="ZH">英译中</option>
-                <option value="EN">中译英</option>
-            </select>
-            <button type="submit" style="width: 200px;" class="btn btn-primary">翻译</button>
-        </form>
+<form action="/translate" method="post">
+  <div class="tx-grid">
+
+    <div class="soft-card tx-card">
+      <h3 class="card-title-mod"><i class="bi bi-input-cursor-text" style="color:var(--blue)"></i>原文</h3>
+      <textarea class="tx-area" name="translate" id="translate" placeholder="在此粘贴或输入要翻译的文本…">{{ strs if strs }}</textarea>
     </div>
-    <div class="lang bg-primary m-auto " >
+
+    <div class="tx-mid">
+      <select class="form-select tx-lang" name="lang" id="lang" aria-label="翻译方向">
+        <option value="ZH">英译中</option>
+        <option value="EN">中译英</option>
+      </select>
+      <button type="submit" class="btn-pill btn-pill-primary">
+        <i class="bi bi-translate"></i> 翻译
+      </button>
     </div>
-    <div class="showDate">
-        <textarea name="showDate" id="showDate" cols="150" rows="10">{{ datas }} </textarea>
+
+    <div class="soft-card tx-card">
+      <h3 class="card-title-mod"><i class="bi bi-check2-circle" style="color:#2bb894"></i>译文</h3>
+      <textarea class="tx-area" readonly placeholder="翻译结果将显示在这里…">{{ result if result }}</textarea>
     </div>
-</div>
 
-
-
+  </div>
+</form>
 {% endblock %}
-{% block container %}
-
-
-{% endblock %}
-<!-- 下方是打印区域 -->
-{% block map %}
-
-{% endblock %}
-
-
-
-
-<script src="../static/js/print.js"></script>

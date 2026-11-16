@@ -24,3 +24,4 @@ logs/
 
 # Project specific
 uploads/
+.shots/

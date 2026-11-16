@@ -1,59 +1,63 @@
-{% include "base.html" %}
-{% block input %}
-<div class="queryInputContianer d-flex justify-content-center m-2 gap-2">
-    <form action="/queryMaterial" method="post" class=" gap-2">
-        <div class="row">
-            
-            <p class="col"><mark>金恒晟</mark>查询方式：单查询为直接输入。多项查询为多查询中间用“/”分隔。例如：查询240G的硬盘."硬盘/240"</p>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="输入要查询的物料名称" id="material" name="material" required>
-                <button type="submit" class="btn btn-primary">查询数据</button>
-            </div>
-        </div>
-    </form>
-</div>
+{% extends "base.html" %}
 
+{% block head %}
+<style>
+  .hint-line { color: var(--muted); font-size: .85rem; margin: 0 0 14px; }
+  .hint-line mark { background: rgba(59,110,245,.10); color: var(--blue-600); border-radius: 6px; padding: .1em .35em; }
+</style>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar">
+  <div class="page-head">
+    <h1>物料查询</h1>
+    <p class="sub">金恒晟账套 · 按物料名称、规格或代码检索</p>
+  </div>
+  <div class="top-actions">
+    <a href="/LSMqueryMaterial" class="btn-pill btn-pill-ghost"><i class="bi bi-archive"></i> 切换到 LSM 铝塑膜</a>
+  </div>
+</div>
 {% endblock %}
 
 {% block container %}
-<div class="container d-print-none fs-6" id="showContent">
-    <table id="myTable" class="display">
-        <thead>
-            <tr>
-                <th>物料名称</th>
-                <th>规格型号</th>
-                <th>物料代码</th>
-                <th>短代码</th>
-                <th>内码</th>
-                <th>单位</th>
+<div class="soft-card mb-4">
+  <p class="hint-line"><mark>查询方式</mark> 单一条件直接输入；多条件用 “/” 分隔，例如：<code>硬盘/240</code></p>
+  <form action="/queryMaterial" method="post">
+    <div class="search-pill">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="输入要查询的物料名称 / 规格 / 代码" id="material" name="material" required autocomplete="off">
+      <button type="submit" class="btn-pill btn-pill-primary"><i class="bi bi-funnel"></i> 查询</button>
+    </div>
+  </form>
+</div>
 
-            </tr>
-        </thead>
-        <tbody class="tableBody">
-            {% for i,d in datas %}
-            <tr>
-                <!-- <td >{{ d['ID'] }}</td> -->
-                <td >{{ d['物料名称'] }}</td>
-                <td >{{ d['规格型号'] }}</td>
-                <td >{{ d['物料代码'] }}</td>
-                <td >{{ d['短代码'] }}</td>
-                <td >{{ d['内码'] }}</td>
-                <td >{{ d['单位'] }}</td>
-                <!-- <td >平方米</td>
-                <td >{{ d['数量'] }}</td>
-                <td >{{ d['备注'] }}</td> -->
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
-    <!-- <h2 class="text-danger">{{ data }}</h2> -->
-</div> 
-
-
-
-
-<!-- <script src="../static/js/datatables.js"></script>
-
+<div class="table-card">
+  {% if message %}
+  <div class="alert alert-warning text-center mb-0" role="alert">{{ message }}</div>
+  {% endif %}
+  <table id="myTable" class="display">
+    <thead>
+      <tr>
+        <th>物料名称</th>
+        <th>规格型号</th>
+        <th>物料代码</th>
+        <th>短代码</th>
+        <th>内码</th>
+        <th>单位</th>
+      </tr>
+    </thead>
+    <tbody class="tableBody">
+      {% for i,d in datas %}
+      <tr>
+        <td>{{ d['物料名称'] }}</td>
+        <td>{{ d['规格型号'] }}</td>
+        <td>{{ d['物料代码'] }}</td>
+        <td>{{ d['短代码'] }}</td>
+        <td>{{ d['内码'] }}</td>
+        <td>{{ d['单位'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
-{% block map %}{% endblock %}

@@ -280,3 +280,112 @@ select:focus, input:focus {
         display: block !important;
     }
 }
+
+/* ============================================================
+   接入主系统视觉系统 (v1.2) — 轻盈柔和 / 大圆角 / 柔和投影
+   ============================================================ */
+:root {
+    --primary-blue: #3b6ef5;
+    --primary-light: #e9efff;
+    --primary-dark: #2f5fe0;
+    --bg-color: #f5f9ff;
+    --sidebar-bg: #ffffff;
+    --card-bg: #fbfdff;
+    --text-primary: #1b2559;
+    --text-secondary: #8b95b3;
+    --border-color: #eef2fb;
+    --radius: 14px;
+}
+
+body {
+    background: radial-gradient(900px 380px at 8% -6%, #dfeaff 0%, rgba(223,234,255,0) 60%),
+                linear-gradient(160deg, #eaf2fe 0%, #f6f9ff 100%);
+    color: var(--text-primary);
+}
+
+.sidebar {
+    background: rgba(255, 255, 255, .88);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid var(--border-color);
+    padding: 1.3rem 1.15rem;
+}
+
+.sidebar header h1 {
+    font-size: 1.16rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -.02em;
+}
+
+.sidebar header p {
+    color: var(--text-secondary);
+    font-size: .8rem;
+}
+
+.control-group { padding-bottom: .9rem; }
+
+.size-btn, .shape-btn, .paper-btn {
+    border-radius: var(--radius) !important;
+    border: 1px solid var(--border-color) !important;
+    background: #fff !important;
+    color: var(--text-secondary) !important;
+    font-weight: 650;
+    box-shadow: 0 8px 18px -14px rgba(28, 52, 110, .5);
+    transition: all .2s;
+}
+
+.size-btn:hover, .shape-btn:hover, .paper-btn:hover {
+    border-color: transparent !important;
+    background: var(--primary-light) !important;
+    color: var(--primary-blue) !important;
+}
+
+.size-btn.active, .shape-btn.active, .paper-btn.active {
+    background: linear-gradient(135deg, #5b8cf8, var(--primary-blue)) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 14px 26px -14px rgba(59, 110, 245, .8);
+}
+
+select, input[type="number"], input[type="text"] {
+    border-radius: var(--radius) !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    padding: .58rem .8rem !important;
+}
+
+select:focus, input:focus {
+    border-color: rgba(59, 110, 245, .45) !important;
+    box-shadow: 0 0 0 4px rgba(59, 110, 245, .10) !important;
+}
+
+.input-row label { color: var(--text-secondary); font-weight: 600; }
+
+.primary-btn {
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, #5b8cf8, var(--primary-blue));
+    box-shadow: 0 14px 26px -14px rgba(59, 110, 245, .85);
+    font-weight: 750;
+}
+
+.primary-btn:hover { background: linear-gradient(135deg, #4f81f7, var(--primary-dark)); }
+
+.color-chip { border-radius: 10px; }
+
+.preview-area {
+    background: transparent;
+}
+
+.preview-container {
+    border-radius: 16px !important;
+    box-shadow: 0 26px 60px -34px rgba(28, 52, 110, .45) !important;
+    border: 1px solid rgba(20, 45, 100, .04);
+}
+
+.preview-label { color: var(--text-secondary); }
+
+.sidebar-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: .9rem;
+}

@@ -1,44 +1,60 @@
 {% extends "base.html" %}
 
+{% block topbar %}
+<div class="top-bar">
+  <div class="page-head">
+    <h1>二维码生成</h1>
+    <p class="sub">输入链接或文字，即时生成并下载高清晰度二维码</p>
+  </div>
+  <div class="top-actions">
+    <span class="chip"><i class="bi bi-phone"></i>扫码即可查看</span>
+  </div>
+</div>
+{% endblock %}
+
 {% block container %}
-<!-- Import qrcode.js -->
 <script src="/static/js/qrcode.min.js"></script>
 
-<div class="container d-flex flex-column align-items-center justify-content-center mt-5">
-    
+<div class="d-flex flex-column align-items-center">
+
     <!-- Creator UI -->
-    <div class="card shadow-sm p-4 w-100" style="max-width: 450px;" id="creator-ui">
-        <h2 class="text-center mb-4"><i class="bi bi-qr-code-scan text-primary me-2"></i>二维码生成器</h2>
-        
-        <div class="mb-3">
-            <input type="text" class="form-control form-control-lg" id="url-input" 
-                   placeholder="输入链接或文字..." value="https://www.google.com"
+    <div class="soft-card w-100" style="max-width: 520px;" id="creator-ui">
+        <h2 class="card-title-mod mb-3 text-center" style="font-size:1.15rem;">
+            <i class="bi bi-qr-code-scan" style="color:var(--blue)"></i> 二维码生成器
+        </h2>
+
+        <div class="search-pill mb-3">
+            <i class="bi bi-link-45deg"></i>
+            <input type="text" id="url-input" placeholder="输入链接或文字…" value="https://www.google.com"
                    onkeydown="if(event.key === 'Enter') createSecureQR()">
         </div>
-        
-        <button class="btn btn-primary btn-lg w-100" onclick="createSecureQR()">生成二维码</button>
-        
-        <div id="qrcode" class="d-flex justify-content-center mt-4 p-2 bg-white rounded shadow-sm" style="min-height: 220px; outline: 1px dotted #ccc;"></div>
-        
+
+        <button class="btn-pill btn-pill-primary btn-pill-block" onclick="createSecureQR()">
+            <i class="bi bi-magic"></i> 生成二维码
+        </button>
+
+        <div id="qrcode" class="d-flex justify-content-center mt-4" style="min-height: 220px;"></div>
+
         <div class="d-flex gap-2 mt-4">
-            <button class="btn btn-success flex-fill" onclick="downloadQR('png')">
-                <i class="bi bi-image me-1"></i>下载 PNG
+            <button class="btn-pill flex-fill" onclick="downloadQR('png')">
+                <i class="bi bi-image"></i> 下载 PNG
             </button>
-            <button class="btn btn-info text-white flex-fill" onclick="downloadQR('jpeg')">
-                <i class="bi bi-file-image me-1"></i>下载 JPEG
+            <button class="btn-pill flex-fill" onclick="downloadQR('jpeg')">
+                <i class="bi bi-file-earmark-image"></i> 下载 JPEG
             </button>
         </div>
     </div>
 
     <!-- Confirm UI -->
-    <div class="card shadow-sm p-4 w-100 d-none" style="max-width: 450px;" id="confirm-ui">
-        <h2 class="text-center text-success mb-4"><i class="bi bi-check-circle-fill me-2"></i>扫码确认</h2>
-        <p id="target-display" class="fs-5 text-break text-center mb-4" style="line-height: 1.5;"></p>
-        <button id="action-btn" class="btn btn-primary btn-lg w-100"></button>
+    <div class="soft-card w-100 d-none" style="max-width: 520px;" id="confirm-ui">
+        <h2 class="card-title-mod mb-3 text-center" style="font-size:1.15rem;color:#2bb894;">
+            <i class="bi bi-check-circle-fill"></i> 扫码确认
+        </h2>
+        <p id="target-display" class="fs-6 text-break text-center mb-4" style="line-height:1.6;"></p>
+        <button id="action-btn" class="btn-pill btn-pill-primary btn-pill-block"></button>
     </div>
 
 </div>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,48 +10,62 @@
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="print" href="/static/css/print.css">
     <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/theme.css">
     <link rel="stylesheet" href="/static/css/bootstrap-icons.min.css">
     <script>
         (() => {
             'use strict'
             const getStoredTheme = () => localStorage.getItem('theme')
+            const getUrlTheme = () => new URLSearchParams(location.search).get('theme')
             const getPreferredTheme = () => {
+                const urlTheme = getUrlTheme()
+                if (urlTheme === 'dark' || urlTheme === 'light') return urlTheme
                 const storedTheme = getStoredTheme()
                 if (storedTheme) return storedTheme
                 return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
             }
-            const setTheme = theme => {
-                document.documentElement.setAttribute('data-bs-theme', theme)
-            }
-            setTheme(getPreferredTheme())
+            document.documentElement.setAttribute('data-bs-theme', getPreferredTheme())
         })()
     </script>
     <title>金恒晟新材料科技有限公司</title>
-    
+    {% block head %}{% endblock %}
 </head>
-<body class="d-flex flex-column justify-content-center">
+<body>
 
     {% include "nav.html" %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="container-fluid px-4 mt-3" style="max-width: 1200px;">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ 'danger' if category == 'error' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="关闭"></button>
-            </div>
-          {% endfor %}
+    <main class="app-main">
+        {% block topbar %}{% endblock %}
+
+        <div class="app-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ 'danger' if category == 'error' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="关闭"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            {% block input %}{% endblock %}
+            {% block queryRow %}{% endblock %}
+            {% block container %}{% endblock %}
+            {% block map %}{% endblock %}
         </div>
-      {% endif %}
-    {% endwith %}
 
-    {% block input %}{% endblock %}
-    {% block container %}{% endblock %}
-    {% block map %}{% endblock %}
-
+        {% block footer %}
+        <footer class="app-footer d-print-none pt-4 text-center">
+            <p class="mb-0" style="font-size:.78rem;color:var(--muted-2);">
+                &copy; 2026 金恒晟新材料科技有限公司 · 系统版本 v1.2.0
+            </p>
+        </footer>
+        {% endblock %}
+    </main>
 
     <script src="/static/js/datatables.js"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
