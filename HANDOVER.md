@@ -46,7 +46,7 @@ templates/base.html    # 全站布局（nav + 主题切换），本地化静态�
 templates/nav.html     # 顶部导航（各打印入口）
 static/js/datatables.js  # 项目自己的 DataTables 初始化脚本（中文配置），不是库
 logs/                  # app.log（UTF-8，RotatingFileHandler 10MB×5）
-manage.bat             # PM2 管理菜单（启动/停止/日志/开机自启），解释器为 .venv\Scripts\pythonw.exe
+manage.bat             # PM2 管理菜单（启动/停止/日志/开机自启）+ 环境自检与自动安装，解释器为 .venv\Scripts\pythonw.exe
 .env                   # 本地配置（已 gitignore，勿提交）；加载逻辑 new_main.py:_load_env_file()
 ```
 
