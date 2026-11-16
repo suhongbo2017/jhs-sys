@@ -16,9 +16,29 @@ from PyDeepLX import PyDeepLX as dx
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 os.makedirs(log_dir, exist_ok=True)
 
+
+def _load_env_file(path: str = None) -> None:
+    """零依赖加载 .env（不覆盖已存在的环境变量）。替代 python-dotenv。"""
+    if path is None:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+    if not os.path.isfile(path):
+        return
+    with open(path, encoding='utf-8-sig') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+            key, _, value = line.partition('=')
+            key, value = key.strip(), value.strip().strip("'\"")
+            if key and key not in os.environ:
+                os.environ[key] = value
+
+
+_load_env_file()
+
 # 创建日志处理器
 log_file = os.path.join(log_dir, 'app.log')
-handler = RotatingFileHandler(log_file, maxBytes=10485760, backupCount=5)
+handler = RotatingFileHandler(log_file, maxBytes=10485760, backupCount=5, encoding='utf-8')
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
 # 配置日志
@@ -69,8 +89,8 @@ def handle_errors(f):
             return f(*args, **kwargs)
         except Exception as e:
             logger.error(f"Error in {f.__name__}: {str(e)}", exc_info=True)
-            flash(str(e), "error")
-            return render_template('error.html', error=str(e))
+            flash('操作出错，详情请查看服务日志', "error")
+            return render_template('error.html', error='操作出错，详情请查看服务日志')
     return decorated_function
 
 # 文件类型验证
@@ -88,9 +108,13 @@ def process_delivery_data(data: str, code_name: int) -> Tuple[Optional[pd.DataFr
     logger.info(f"格式化输入单号：{data_list}")
     
     try:
-        # 过滤掉空的 DataFrame
+        # 过滤掉空的 DataFrame（全部未命中时避免 concat([]) 抛 ValueError）
         results = [server_connect.query_SEord(ds, code_name) for ds in data_list]
-        datas = pd.concat([df for df in results if not df.empty])
+        non_empty = [df for df in results if not df.empty]
+        if not non_empty:
+            return None, None
+
+        datas = pd.concat(non_empty)
         
         if datas.empty:
             return None, None
@@ -118,7 +142,7 @@ def handle_print_request(request, code_name: int, template_name: str):
         return render_template(template_name, table=datas.to_dict(orient='records'), data=seout_id)
     except Exception as e:
         logger.error(f"Error in handle_print_request: {str(e)}", exc_info=True)
-        flash(f"操作出错: {str(e)}", "error")
+        flash('操作出错，详情请查看服务日志', "error")
         return render_template(template_name)
 
 # ===== 路由定义 =====
@@ -231,7 +255,7 @@ def zhidongli():
                              names=processed_data.columns)
     except Exception as e:
         logger.error(f"Error in zhidongli route: {str(e)}", exc_info=True)
-        flash(f"操作出错: {str(e)}", "error")
+        flash('操作出错，详情请查看服务日志', "error")
         return render_template('zhidongli.html')
 
 # 物料查询处理函数
@@ -277,7 +301,7 @@ def queryMaterial():
         return render_template('queryMaterial.html')
     except Exception as e:
         logger.error(f"Error in queryMaterial: {str(e)}", exc_info=True)
-        flash(f"查询出错: {str(e)}", "error")
+        flash('查询出错，详情请查看服务日志', "error")
         return render_template('queryMaterial.html')
 
 @app.route('/LSMqueryMaterial', methods=['GET', 'POST'])
@@ -304,7 +328,7 @@ def LSMqueryMaterial():
         return render_template('LSMqueryMaterial.html')
     except Exception as e:
         logger.error(f"Error in LSMqueryMaterial: {str(e)}", exc_info=True)
-        flash(f"查询出错: {str(e)}", "error")
+        flash('查询出错，详情请查看服务日志', "error")
         return render_template('LSMqueryMaterial.html')
 
 @app.route('/translate', methods=['GET', 'POST'])
@@ -328,7 +352,7 @@ def translate():
         return render_template('translate.html', result=result)
     except Exception as e:
         logger.error(f"翻译错误: {str(e)}", exc_info=True)
-        flash(f"翻译出错: {str(e)}", "error")
+        flash('翻译出错，详情请查看服务日志', "error")
         return render_template('translate.html')
 
 if __name__ == '__main__':

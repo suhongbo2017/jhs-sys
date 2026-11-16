@@ -15,7 +15,8 @@ logger.setLevel(logging.INFO)
 server = os.getenv('DB_SERVER', '192.168.0.234')
 database = os.getenv('DB_DATABASE', 'AIS20191210135722')
 username = os.getenv('DB_USERNAME', 'sa')
-password = 'Jhs16888'
+# 内网环境：默认值仅为免配置兑底，可被 .env / 环境变量覆盖
+password = os.getenv('DB_PASSWORD', 'Jhs16888')
 
 DB_SCHEMA_2019 = f"{database}.dbo"
 DB_SCHEMA_2023 = os.getenv('DB_SCHEMA_2023', 'AIS20230525154804.dbo')
@@ -26,14 +27,35 @@ COLUMNS_SEOUTSTOCK = [
 
 
 # ===== 数据库连接 =====
+# 驱动候选：新驱动（Docker/Linux 安装的 msodbcsql18/17）优先，旧驱动（Windows 自带）兑底
+_ODBC_CANDIDATES = [
+    'ODBC Driver 18 for SQL Server',
+    'ODBC Driver 17 for SQL Server',
+    'SQL Server',
+]
+
+
 def get_connection():
-    """获取数据库连接（连接不缓存，由 with 块管理生命周期）"""
-    conn_str = (
-        f'DRIVER={{SQL Server}};'
-        f'SERVER={server};DATABASE={database};'
-        f'UID={username};PWD={password};'
-    )
-    return pyodbc.connect(conn_str)
+    """获取数据库连接（连接不缓存，由 with 块管理生命周期）。
+    驱动自适应：按候选列表匹配本机已安装的 ODBC 驱动。
+    """
+    available = pyodbc.drivers()
+    driver = next((d for d in _ODBC_CANDIDATES if d in available), None)
+    if driver is None:
+        raise RuntimeError(
+            f'未找到 SQL Server ODBC 驱动，本机已安装: {available or "无"}。'
+            f'候选: {_ODBC_CANDIDATES}'
+        )
+
+    parts = [
+        f'DRIVER={{{driver}}}',
+        f'SERVER={server};DATABASE={database};',
+        f'UID={username};PWD={password};',
+    ]
+    if '18' in driver:
+        # Driver 18 默认强制加密，自签名证书需跳过校验
+        parts.append('TrustServerCertificate=yes;')
+    return pyodbc.connect(''.join(parts))
 
 
 # ===== 查询配置（数据驱动替代 6 个重复函数）=====
@@ -223,7 +245,7 @@ if __name__ == "__main__":
     os.makedirs(log_dir, exist_ok=True)
     handler = RotatingFileHandler(
         os.path.join(log_dir, 'server_connect.log'),
-        maxBytes=10485760, backupCount=5
+        maxBytes=10485760, backupCount=5, encoding='utf-8'
     )
     handler.setFormatter(logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

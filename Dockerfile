@@ -25,7 +25,8 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc -o /usr/share/keyring
 COPY . /app/
 
 # 安装Python依赖
-RUN pip install --no-cache-dir flask flask-bootstrap flask-bootstrap5 pandas pyodbc waitress
+# 从 pyproject.toml 安装全部依赖（避免手写列表遗漏，如 PyDeepLX）
+RUN pip install --no-cache-dir .
 
 # 设置环境变量
 ENV PYTHONUNBUFFERED=1

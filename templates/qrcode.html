@@ -2,7 +2,7 @@
 
 {% block container %}
 <!-- Import qrcode.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/static/js/qrcode.min.js"></script>
 
 <div class="container d-flex flex-column align-items-center justify-content-center mt-5">
     
@@ -54,13 +54,21 @@
             const displayElement = document.getElementById('target-display');
             const actionBtn = document.getElementById('action-btn');
 
-            // 判断是网址还是纯文本
+            // 安全渲染：用 DOM API + textContent，避免 innerHTML 注入（XSS）
+            displayElement.textContent = '';
             if (decodedData.startsWith('http')) {
-                displayElement.innerHTML = `<strong>跳转链接：</strong><br><a href="${decodedData}">${decodedData}</a>`;
+                const label = document.createElement('strong');
+                label.textContent = '跳转链接：';
+                const link = document.createElement('a');
+                link.href = decodedData;   // 仅 http(s) 白名单，javascript: 等协议落入下方文本分支
+                link.textContent = decodedData;
+                displayElement.append(label, document.createElement('br'), link);
                 actionBtn.innerText = "确认前往";
                 actionBtn.onclick = () => window.location.href = decodedData;
             } else {
-                displayElement.innerHTML = `<strong>扫描内容：</strong><br>${decodedData}`;
+                const label = document.createElement('strong');
+                label.textContent = '扫描内容：';
+                displayElement.append(label, document.createElement('br'), decodedData);
                 actionBtn.innerText = "已知晓";
                 actionBtn.onclick = () => alert("内容已确认");
             }
