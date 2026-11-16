@@ -14,7 +14,8 @@ dependencies = [
     "waitress>=3.0.0",           # Windows 生产 (wsgi.py)
     "gunicorn>=21.2.0",          # Linux/Docker 部署
     "mysql-connector-python>=8.0.0,<9.0.0",
-    "PyDeepLX>=0.1.0",
+    "pymupdf>=1.24",          # PDF 渲染（PDF 翻译）
+    "pillow>=10",             # 图片处理（PDF 翻译）
     "pywebview>=4.3.2",          # 桌面客户端 (gui_launcher.py)
     "pyinstaller>=6.7.0",        # 打包
 ]

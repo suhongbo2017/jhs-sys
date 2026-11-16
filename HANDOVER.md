@@ -31,7 +31,7 @@
 | `/bartender_tag/` | Bartender 标签查询页 | - | `tag_code2026.html`（781 行单页应用） |
 | `/date_tag/` | 月份标签设计器 | - | 独立静态模块 `date_tag/`，需求见 `date_tag/readme.txt` |
 | `/qrcode` | 二维码生成 | - | |
-| `/translate` | DeepLX 翻译 | - | |
+| `/pdf_translate` | **PDF / 扫描件翻译** | - | 视觉大模型转写+翻译，输出双语 PDF / 覆盖式 HTML / Markdown；后台任务 + 轮询进度 |
 
 **核心链路**：`new_main.py:process_delivery_data` → `server_connect.py:query_SEord(单号, codeName)` → 先查 `SEOutStock`（表头，取 FInterID）再查 `SEOutStockEntry`（明细）→ `ENTRY_CONFIGS[codeName]` 定义列名/SQL 字段/后处理聚合 → pandas DataFrame → 渲染打印模板。
 
@@ -50,7 +50,23 @@ manage.bat             # PM2 管理菜单（启动/停止/日志/开机自启）
 .env                   # 本地配置（已 gitignore，勿提交）；加载逻辑 new_main.py:_load_env_file()
 ```
 
+## 3.5 PDF 翻译模块（2026-11-16 新增，替换原 DeepLX 文本翻译）
+
+- 代码：`pdftranslate/`（vendored 自 `D:\PI\pdftranslate`，纯 pymupdf+pillow，无第三方 SDK）+ `pdf_translate_jobs.py`（后台任务/进度/产物）+ `templates/pdf_translate.html`
+- 模型：`models.json` 注册表，qwen（默认，国内直连）/ gemini / openai / glm；Key 放 `.env`（`DASHSCOPE_API_KEY` 等）
+- 流程：上传 → `uploads/pdf_translate/<job_id>/in` → 流水线（文本层路由 auto：原生电子版走本地文本直译，省费用）→ `out/` → 前端轮询 `/pdf_translate/status/<job_id>` → 下载 `/pdf_translate/download/<job_id>/<name>`
+- 任务状态仅存内存，**重启服务后历史任务列表清空**（产物文件仍在 uploads 下）
+- 成本：视觉模型约 0.01–0.03 元/页；页面有“演练模式”复选框（mock，不调模型不花钱），改前端/调样式时用它验证
+- 上传上限已提高到 100MB（`MAX_CONTENT_LENGTH`），单文件限制 80MB
+- 原 `/translate`（PyDeepLX）路由、模板、依赖已全部移除
+
 ## 4. 2026-11-16 审核与修复记录（重要）
+
+### UI 重构（同日，第二次提交）
+- 新增 `static/css/theme.css` 作为全站唯一视觉真源（马卡龙渐变卡片、大圆角、柔和投影、胶囊按钮、现代表格）
+- `base.html` 改为 app-shell 骨架；`nav.html` 改为**带文字说明的左侧功能栏**（198px，窄屏 76px 仅图标 + 悬浮提示；打印模板为飞出面板）
+- 所有模板 `include base.html` → `extends`（修复内容渲染在 `</html>` 之后的旧结构）
+- 深色模式统一；可用 `?theme=dark` 临时预览
 
 ### 已修复（本机已验证）
 1. **单号不存在时整页 500** → `process_delivery_data` 空结果提前返回，用户输错单号现在得到"未查询到数据"提示（原日志反复出现 `No objects to concatenate`）

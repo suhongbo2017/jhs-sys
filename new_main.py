@@ -1,16 +1,17 @@
 # 导入所需的库
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, request, flash, send_from_directory
+from flask import (Flask, render_template, request, flash, send_from_directory,
+                   redirect, url_for, jsonify)
 from flask_bootstrap import Bootstrap4
 import server_connect
+import pdf_translate_jobs
 import pandas as pd
 import os
 import re
 from functools import wraps
 import threading
 from typing import Optional, Tuple, List, Any
-from PyDeepLX import PyDeepLX as dx
 
 # 配置日志
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -46,24 +47,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
-# 翻译器单例（延迟初始化，带线程锁）
-_translator = None
-_translator_lock = threading.Lock()
-def get_translator():
-    global _translator
-    if _translator is None:
-        with _translator_lock:
-            if _translator is None:  # 双重检查锁定
-                _translator = dx()
-    return _translator
-
 # ===== 应用工厂 =====
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(16).hex())
     app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
     app.config['ALLOWED_EXTENSIONS'] = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+    app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # PDF 翻译需要更大上传额度
 
     Bootstrap4(app)
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -334,29 +324,74 @@ def LSMqueryMaterial():
         flash('查询出错，详情请查看服务日志', "error")
         return render_template('LSMqueryMaterial.html')
 
-@app.route('/translate', methods=['GET', 'POST'])
-@handle_errors
-def translate():
-    try:
-        strs = request.form.get('translate')
-        lang = request.form.get('lang')
-        
-        if not strs:
-            logger.warning("未提供翻译文本")
-            flash('请输入要翻译的内容', 'warning')
-            return render_template('translate.html')
-            
-        logger.info(f"翻译请求 - 语言: {lang}, 文本: {strs}")
-        
-        translator = get_translator()
-        result = translator.translate(strs, source_lang="auto", target_lang=lang)
-        
-        logger.info(f"翻译完成: {result}")
-        return render_template('translate.html', result=result, strs=strs)
-    except Exception as e:
-        logger.error(f"翻译错误: {str(e)}", exc_info=True)
-        flash('翻译出错，详情请查看服务日志', "error")
-        return render_template('translate.html')
-
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+# ============================================================
+# PDF / 扫描件 翻译（复用 vendored pdftranslate 流水线）
+# ============================================================
+@app.route('/pdf_translate', methods=['GET', 'POST'])
+@handle_errors
+def pdf_translate():
+    if request.method == 'POST':
+        uploads = request.files.getlist('files')
+        files: List[Tuple[str, bytes]] = []
+        for f in uploads:
+            if not f or not f.filename:
+                continue
+            files.append((f.filename, f.read()))
+
+        model_id = request.form.get('model') or pdf_translate_jobs.default_model()
+        pages = request.form.get('pages', '')
+        try:
+            dpi = int(request.form.get('dpi') or 250)
+        except ValueError:
+            dpi = 250
+        want_pdf = request.form.get('want_pdf') == 'on'
+        want_html = request.form.get('want_html') == 'on'
+        want_md = request.form.get('want_md') == 'on'
+        if not (want_pdf or want_html or want_md):
+            want_pdf = want_html = want_md = True
+        mock = request.form.get('mock') == 'on'
+
+        job_id, err = pdf_translate_jobs.create_job(
+            files=files, model_id=model_id, pages=pages, dpi=dpi,
+            want_pdf=want_pdf, want_html=want_html, want_md=want_md,
+            text_layer=request.form.get('text_layer', 'auto'), mock=mock,
+        )
+        if err:
+            flash(err, 'warning')
+            return render_template('pdf_translate.html',
+                                   models=pdf_translate_jobs.available_models(),
+                                   default_model=pdf_translate_jobs.default_model(),
+                                   jobs=pdf_translate_jobs.list_jobs())
+        logger.info(f"PDF 翻译任务已创建: {job_id}")
+        return redirect(url_for('pdf_translate', job=job_id))
+
+    return render_template('pdf_translate.html',
+                           models=pdf_translate_jobs.available_models(),
+                           default_model=pdf_translate_jobs.default_model(),
+                           jobs=pdf_translate_jobs.list_jobs(),
+                           job=request.args.get('job', ''))
+
+
+@app.route('/pdf_translate/status/<job_id>')
+def pdf_translate_status(job_id: str):
+    job = pdf_translate_jobs.get_job(job_id)
+    if not job:
+        return jsonify({'error': '任务不存在或已过期'}), 404
+    return jsonify(job)
+
+
+@app.route('/pdf_translate/download/<job_id>/<path:name>')
+def pdf_translate_download(job_id: str, name: str):
+    workdir = pdf_translate_jobs.job_dir(job_id)
+    if not workdir:
+        flash('任务不存在或已过期', 'warning')
+        return redirect(url_for('pdf_translate'))
+    out_dir = (workdir / 'out').resolve()
+    target = (out_dir / name).resolve()
+    if not str(target).startswith(str(out_dir)) or not target.is_file():
+        flash('文件不存在', 'warning')
+        return redirect(url_for('pdf_translate'))
+    return send_from_directory(out_dir, name, as_attachment=True)

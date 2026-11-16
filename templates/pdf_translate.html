@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  .pt-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
+  .drop-zone {
+    border: 2px dashed var(--line-2);
+    border-radius: var(--r-lg);
+    background: var(--surface-2);
+    padding: 34px 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .22s;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: rgba(59,110,245,.45);
+    background: var(--blue-100);
+  }
+  .drop-zone .bi { font-size: 2.2rem; color: var(--blue); }
+  .drop-zone .dz-title { font-weight: 750; color: var(--ink); margin: 10px 0 4px; }
+  .drop-zone .dz-sub { font-size: .82rem; color: var(--muted); }
+  .file-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .file-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--blue-100); border-radius: 12px; padding: 9px 12px;
+    font-size: .84rem; color: var(--ink-2); font-weight: 600;
+  }
+  .file-item .bi { color: var(--blue); }
+  .file-item .size { margin-left: auto; color: var(--muted); font-weight: 500; }
+  .file-item .rm { color: var(--muted-2); cursor: pointer; border: 0; background: transparent; }
+  .opt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .opt-row label { font-size: .78rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 6px; }
+  .check-line { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+  .check-line label { display: inline-flex; align-items: center; gap: 7px; font-size: .85rem; color: var(--ink-2); font-weight: 600; }
+  .check-line input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--blue); }
+  .progress-wrap { margin-top: 6px; }
+  .progress-bar-mod { height: 10px; border-radius: 999px; background: var(--blue-100); overflow: hidden; }
+  .progress-bar-mod > span {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, #7fb5f9, var(--blue));
+    border-radius: 999px; transition: width .4s ease;
+  }
+  .log-box {
+    margin-top: 14px; background: #0f1729; color: #c9d6f2; border-radius: 14px;
+    padding: 14px 16px; font-family: "Consolas", "SF Mono", monospace; font-size: .76rem;
+    height: 190px; overflow: auto; line-height: 1.75; white-space: pre-wrap; word-break: break-all;
+  }
+  .job-list { display: flex; flex-direction: column; gap: 10px; }
+  .job-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 14px; background: var(--surface-2);
+    border: 1px solid var(--line); font-size: .84rem;
+  }
+  .job-row .jid { font-weight: 700; color: var(--ink); }
+  .job-row .jmeta { color: var(--muted); font-size: .78rem; }
+  .badge-status { font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .st-done { background: #e9f9f1; color: #12744e; }
+  .st-running { background: var(--blue-100); color: var(--blue-600); }
+  .st-failed { background: #fdeef1; color: #9d2235; }
+  .st-queued { background: #fff8e8; color: #8a5a00; }
+  .out-link {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+    border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line);
+    text-decoration: none; color: var(--ink-2); font-weight: 650; font-size: .86rem;
+    transition: all .2s;
+  }
+  .out-link:hover { background: var(--blue-100); color: var(--blue); border-color: transparent; }
+  .out-link .bi { color: var(--blue); }
+  .out-link .fs { margin-left: auto; color: var(--muted); font-weight: 500; font-size: .78rem; }
+  .model-note { font-size: .76rem; color: var(--muted); margin-top: 6px; }
+  @media (max-width: 991px) { .pt-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar">
+  <div class="page-head">
+    <h1>PDF 翻译</h1>
+    <p class="sub">扫描件 / 图片型 PDF / 截图 —— 视觉大模型直接转写并译成中文，保留版式</p>
+  </div>
+  <div class="top-actions">
+    <span class="chip"><i class="bi bi-file-earmark-pdf"></i>输出：双语 PDF · 覆盖式 HTML · Markdown</span>
+  </div>
+</div>
+{% endblock %}
+
+{% block container %}
+<div class="pt-grid">
+
+  <!-- 左：上传与参数 -->
+  <div class="soft-card">
+    <form id="pt-form" action="/pdf_translate" method="post" enctype="multipart/form-data">
+      <div class="drop-zone" id="drop-zone">
+        <i class="bi bi-cloud-arrow-up"></i>
+        <div class="dz-title">点击选择，或把文件拖到这里</div>
+        <div class="dz-sub">支持 PDF / PNG / JPG / TIFF / BMP，单文件 ≤ 80MB，可多选</div>
+        <input type="file" id="file-input" name="files" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp" hidden>
+      </div>
+      <div class="file-list" id="file-list"></div>
+
+      <div class="opt-row">
+        <div>
+          <label for="model">视觉模型</label>
+          <select class="form-select" id="model" name="model">
+            {% for m in models %}
+            <option value="{{ m.id }}" {% if m.id == default_model %}selected{% endif %}>
+              {{ m.label }}{% if not m.has_key %}（缺少 Key）{% endif %}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="pages">页码范围（留空 = 全部）</label>
+          <input class="form-control" type="text" id="pages" name="pages" placeholder="如 1-3,5">
+        </div>
+        <div>
+          <label for="dpi">渲染精度 DPI</label>
+          <select class="form-select" id="dpi" name="dpi">
+            <option value="200">200（快）</option>
+            <option value="250" selected>250（推荐）</option>
+            <option value="300">300（手写件更准）</option>
+            <option value="400">400（最慢最准）</option>
+          </select>
+        </div>
+        <div>
+          <label for="text_layer">文本层路由</label>
+          <select class="form-select" id="text_layer" name="text_layer">
+            <option value="auto" selected>auto（电子版走文本直译）</option>
+            <option value="always">always（有文本层就用）</option>
+            <option value="never">never（一律视觉模型）</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="check-line">
+        <label><input type="checkbox" name="want_pdf" checked> 双语 PDF</label>
+        <label><input type="checkbox" name="want_html" checked> 覆盖式 HTML</label>
+        <label><input type="checkbox" name="want_md" checked> Markdown</label>
+        <label><input type="checkbox" name="mock"> 演练模式（不调模型、不花钱）</label>
+      </div>
+
+      <div class="model-note">
+        提示：每页调用一次视觉模型（约 0.01–0.03 元/页）；原生电子版 PDF 走本地文本层，通常不产生费用。
+      </div>
+
+      <button type="submit" class="btn-pill btn-pill-primary btn-pill-block mt-3" id="submit-btn">
+        <i class="bi bi-translate"></i> 开始翻译
+      </button>
+    </form>
+  </div>
+
+  <!-- 右：进度与产物 -->
+  <div>
+    <div class="soft-card" id="status-card">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <h3 class="card-title-mod mb-0">任务进度</h3>
+        <span class="badge-status st-queued" id="status-badge">待开始</span>
+      </div>
+      <div class="jmeta" style="color:var(--muted);font-size:.8rem;" id="status-meta">上传文件后自动开始</div>
+
+      <div class="progress-wrap mt-3">
+        <div class="progress-bar-mod"><span id="progress-bar"></span></div>
+        <div class="d-flex justify-content-between mt-2" style="font-size:.78rem;color:var(--muted);">
+          <span id="progress-text">0 / 0 页</span>
+          <span id="progress-pct">0%</span>
+        </div>
+      </div>
+
+      <div class="log-box" id="log-box">等待任务开始…</div>
+
+      <div id="outputs" class="d-flex flex-column gap-2 mt-3"></div>
+    </div>
+
+    {% if jobs %}
+    <div class="soft-card mt-3">
+      <h3 class="card-title-mod mb-3">最近任务</h3>
+      <div class="job-list">
+        {% for j in jobs[:6] %}
+        <a class="job-row" href="/pdf_translate?job={{ j.id }}" style="text-decoration:none;">
+          <div>
+            <div class="jid">{{ j.id }}</div>
+            <div class="jmeta">{{ j.created }} · {{ j.model }}{% if j.mock %} · 演练{% endif %} · {{ j.outputs|length }} 个产物</div>
+          </div>
+          <span class="badge-status st-{{ j.status }} ms-auto">
+            {% if j.status == 'done' %}完成{% elif j.status == 'running' %}进行中{% elif j.status == 'failed' %}失败{% else %}排队{% endif %}
+          </span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  const state = { files: [], jobId: {{ (job or '')|tojson }}, timer: null };
+
+  // ---------- 文件选择 ----------
+  const dz = document.getElementById('drop-zone');
+  const input = document.getElementById('file-input');
+  const list = document.getElementById('file-list');
+  const form = document.getElementById('pt-form');
+
+  function fmtSize(n) {
+    if (n > 1024 * 1024) return (n / 1024 / 1024).toFixed(1) + ' MB';
+    return Math.max(1, Math.round(n / 1024)) + ' KB';
+  }
+
+  function renderFiles() {
+    list.innerHTML = '';
+    state.files.forEach((f, i) => {
+      const row = document.createElement('div');
+      row.className = 'file-item';
+      const icon = document.createElement('i');
+      icon.className = 'bi bi-file-earmark-pdf';
+      const name = document.createElement('span');
+      name.textContent = f.name;
+      const size = document.createElement('span');
+      size.className = 'size';
+      size.textContent = fmtSize(f.size);
+      const rm = document.createElement('button');
+      rm.type = 'button';
+      rm.className = 'rm';
+      rm.innerHTML = '<i class="bi bi-x-lg"></i>';
+      rm.onclick = () => { state.files.splice(i, 1); renderFiles(); };
+      row.append(icon, name, size, rm);
+      list.appendChild(row);
+    });
+    // 同步到 input 用于提交
+    const dt = new DataTransfer();
+    state.files.forEach(f => dt.items.add(f));
+    input.files = dt.files;
+  }
+
+  function addFiles(fileList) {
+    Array.from(fileList).forEach(f => {
+      if (!/\.(pdf|png|jpe?g|tiff?|bmp)$/i.test(f.name)) return;
+      if (f.size > 80 * 1024 * 1024) { alert(f.name + ' 超过 80MB'); return; }
+      state.files.push(f);
+    });
+    renderFiles();
+  }
+
+  dz.addEventListener('click', () => input.click());
+  input.addEventListener('change', () => addFiles(input.files));
+  ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => {
+    e.preventDefault(); dz.classList.add('dragover');
+  }));
+  ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => {
+    e.preventDefault(); dz.classList.remove('dragover');
+  }));
+  dz.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+
+  const submitBtn = document.getElementById('submit-btn');
+  form.addEventListener('submit', (e) => {
+    if (!state.files.length) {
+      e.preventDefault();
+      alert('请先选择要翻译的文件');
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> 上传中…';
+  });
+
+  // ---------- 任务状态轮询 ----------
+  const badge = document.getElementById('status-badge');
+  const meta = document.getElementById('status-meta');
+  const bar = document.getElementById('progress-bar');
+  const ptxt = document.getElementById('progress-text');
+  const ppct = document.getElementById('progress-pct');
+  const logBox = document.getElementById('log-box');
+  const outputs = document.getElementById('outputs');
+
+  const LABEL = { queued: '排队', running: '进行中', done: '完成', failed: '失败' };
+
+  function badgeClass(s) { return 'badge-status st-' + s; }
+
+  function renderOut(job) {
+    outputs.innerHTML = '';
+    (job.outputs || []).forEach(o => {
+      const a = document.createElement('a');
+      a.className = 'out-link';
+      a.href = '/pdf_translate/download/' + job.id + '/' + encodeURI(o.name);
+      const icon = document.createElement('i');
+      icon.className = 'bi ' + (o.name.endsWith('.pdf') ? 'bi-file-earmark-pdf'
+        : o.name.endsWith('.html') ? 'bi-file-earmark-code' : 'bi-file-earmark-text');
+      const label = document.createElement('span');
+      label.textContent = o.label + ' · ' + o.name.split('/').pop();
+      const size = document.createElement('span');
+      size.className = 'fs';
+      size.textContent = (o.size / 1024 / 1024 > 1)
+        ? (o.size / 1024 / 1024).toFixed(1) + ' MB' : Math.round(o.size / 1024) + ' KB';
+      a.append(icon, label, size);
+      outputs.appendChild(a);
+    });
+  }
+
+  function poll(jobId) {
+    fetch('/pdf_translate/status/' + jobId)
+      .then(r => r.json())
+      .then(job => {
+        if (job.error && job.status === undefined) return;
+        badge.className = badgeClass(job.status);
+        badge.textContent = LABEL[job.status] || job.status;
+        meta.textContent = `${job.model}${job.mock ? ' · 演练' : ''} · 已用时 ${job.elapsed}s`;
+        bar.style.width = job.progress + '%';
+        ppct.textContent = job.progress + '%';
+        ptxt.textContent = `${job.done_pages} / ${job.total_pages} 页`;
+        logBox.textContent = (job.logs || []).join('\n');
+        logBox.scrollTop = logBox.scrollHeight;
+        renderOut(job);
+        if (job.error) {
+          const err = document.createElement('div');
+          err.className = 'alert alert-danger mt-3 mb-0';
+          err.textContent = job.error;
+          outputs.appendChild(err);
+        }
+        if (job.status === 'done' || job.status === 'failed') {
+          clearInterval(state.timer);
+          state.timer = null;
+        }
+      })
+      .catch(() => {});
+  }
+
+  if (state.jobId) {
+    poll(state.jobId);
+    state.timer = setInterval(() => poll(state.jobId), 1500);
+  }
+})();
+</script>
+{% endblock %}

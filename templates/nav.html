@@ -1,41 +1,45 @@
 <aside class="side-rail d-print-none">
-    <a href="/" class="rail-logo" data-label="主页" title="金恒晟系统">
-        <i class="bi bi-grid-1x2-fill"></i>
+    <a href="/" class="rail-brand" title="金恒晟业务系统">
+        <span class="rail-logo"><i class="bi bi-grid-1x2-fill"></i></span>
+        <span class="rail-brand-text">金恒晟系统</span>
     </a>
 
     <nav class="rail-nav">
-        <a href="/" class="rail-item" data-label="主页" data-match="/">
-            <i class="bi bi-house-door"></i>
+        <a href="/" class="rail-item" data-label="工作台" data-match="/">
+            <i class="bi bi-house-door"></i><span>工作台</span>
         </a>
         <a href="/queryMaterial" class="rail-item" data-label="物料查询" data-match="/queryMaterial">
-            <i class="bi bi-search"></i>
+            <i class="bi bi-search"></i><span>物料查询</span>
         </a>
-        <a href="/LSMqueryMaterial" class="rail-item" data-label="LSM 物料查询" data-match="/LSMqueryMaterial">
-            <i class="bi bi-archive"></i>
+        <a href="/LSMqueryMaterial" class="rail-item" data-label="LSM 物料" data-match="/LSMqueryMaterial">
+            <i class="bi bi-archive"></i><span>LSM 物料</span>
         </a>
+
+        <div class="rail-sep"></div>
 
         <button type="button" class="rail-item" id="rail-print-btn" data-label="打印模板"
                 data-match="/yunHaiPrint,/jinLiPrint,/jiuMaoPrint,/qianJi,/tongtaiying,/fengzhenchang,/fengzhenchang_copy,/zhidongli">
-            <i class="bi bi-printer"></i>
+            <i class="bi bi-printer"></i><span>打印模板</span>
+            <i class="bi bi-chevron-right rail-caret"></i>
         </button>
 
-        <a href="/bartender_tag/" class="rail-item" data-label="BarTender 字段" data-match="/bartender_tag">
-            <i class="bi bi-upc-scan"></i>
+        <a href="/bartender_tag/" class="rail-item" data-label="BarTender" data-match="/bartender_tag">
+            <i class="bi bi-upc-scan"></i><span>BarTender</span>
         </a>
-        <a href="/date_tag_view" class="rail-item" data-label="月份标签设计" data-match="/date_tag">
-            <i class="bi bi-calendar-date"></i>
+        <a href="/date_tag_view" class="rail-item" data-label="月份标签" data-match="/date_tag">
+            <i class="bi bi-calendar-date"></i><span>月份标签</span>
         </a>
-        <a href="/qrcode" class="rail-item" data-label="二维码生成" data-match="/qrcode">
-            <i class="bi bi-qr-code"></i>
+        <a href="/qrcode" class="rail-item" data-label="二维码" data-match="/qrcode">
+            <i class="bi bi-qr-code"></i><span>二维码</span>
         </a>
-        <a href="/translate" class="rail-item" data-label="翻译工具" data-match="/translate">
-            <i class="bi bi-translate"></i>
+        <a href="/pdf_translate" class="rail-item" data-label="PDF 翻译" data-match="/pdf_translate">
+            <i class="bi bi-file-earmark-pdf"></i><span>PDF 翻译</span>
         </a>
     </nav>
 
     <div class="rail-foot">
         <button type="button" class="rail-item" id="theme-toggle-btn" data-label="切换深浅色">
-            <i class="bi bi-moon-stars" id="theme-icon"></i>
+            <i class="bi bi-moon-stars" id="theme-icon"></i><span>切换主题</span>
         </button>
     </div>
 </aside>
