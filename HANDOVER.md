@@ -2,6 +2,8 @@
 
 > 更新时间：2026-11-16 ｜ 维护人：suhongbo ｜ 仓库：`D:\VSCODE\PYTHON3\system`（GitHub: suhongbo2017/jhs-sys）
 
+> **AI Agent 请读 `AGENTS.md`**（技术栈、设计系统、模板规范、陷阱清单、任务配方全在那里）。
+
 ---
 
 ## 1. 项目是什么
