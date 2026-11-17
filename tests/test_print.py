@@ -1,11 +1,13 @@
 """打印路由行为测试：空输入、命中、未命中、多单号（数据层打桩）。"""
 
+import os
 import unittest
 from unittest.mock import patch
 
 import pandas as pd
 
 from tests import support
+import new_main
 import server_connect
 
 PRINT_ROUTES = [
@@ -112,6 +114,48 @@ class MaterialQueryRouteTest(unittest.TestCase):
             resp = self.client.post('/queryMaterial', data={'material': 'PET'})
         self.assertEqual(resp.status_code, 200)
         self.assertNotIn('secret-password-in-dsn', resp.get_data(as_text=True))
+
+
+class TemplateFieldContractTest(unittest.TestCase):
+    """模板里 row['X'] / i['X'] 引用的字段，必须在路由传入的数据里真的存在。
+
+    历史上 zhidongli.html 引用了 料号/物料名称/批次号/备注，而数据处理已把它们
+    重命名为 智动力编码/品名/…，结果打印出来是静默空白——此用例专防这类漂移。
+    """
+
+    PRINT_TEMPLATES = {
+        'yunHaiPrint.html': 1,
+        'jinLiPrint.html': 2,
+        'jiuMaoPrint.html': 3,
+        'qianJi.html': 4,
+        'tongtaiying.html': 5,
+        'fengzhenchang.html': 6,
+        'fengzhenchang_copy.html': 6,
+    }
+
+    @staticmethod
+    def _referenced_keys(template: str):
+        import re
+
+        path = os.path.join(support.ROOT, 'templates', template)
+        with open(path, encoding='utf-8') as f:
+            html = f.read()
+        return set(re.findall(r"\b(?:row|i)\['([^']+)'\]", html))
+
+    def test_print_templates_match_entry_config(self):
+        for template, code in self.PRINT_TEMPLATES.items():
+            available = set(server_connect.ENTRY_CONFIGS[code].columns) | {'ID'}
+            missing = self._referenced_keys(template) - available
+            self.assertEqual(missing, set(), f'{template} 引用了不存在的字段: {missing}')
+
+    def test_zhidongli_template_matches_processed_columns(self):
+        raw = pd.DataFrame([{
+            '订单号': 'PO1', '料号': 'FC-0832', '物料名称': '隔膜', '批号': '12N2606162207',
+            '数量': '1', '整支规格': '1.2*200*300*4', '备注': 'spec',
+        }])
+        processed = new_main.process_zhidongli_data(raw)
+        missing = self._referenced_keys('zhidongli.html') - set(processed.columns)
+        self.assertEqual(missing, set(), f'zhidongli.html 引用了不存在的字段: {missing}')
 
 
 if __name__ == '__main__':

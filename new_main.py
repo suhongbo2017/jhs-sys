@@ -199,7 +199,7 @@ def process_zhidongli_data(datas: pd.DataFrame) -> pd.DataFrame:
     try:
         # 假设 codeName=2 返回的列名为：['物料名称', '整支规格', '料号', '批号', '订单号', '数量', '备注', '批次号']
         # 根据实际需求选择和重命名列
-        newdatas = datas[['订单号', '批次号', '物料名称', '数量', '整支规格', '备注']].copy()
+        newdatas = datas[['订单号', '料号', '物料名称', '数量', '整支规格', '备注', '批号']].copy()
         
         # 解析 '整支规格' 列，并添加健壮性检查
         newdatas[['厚', '宽', '长', '支']] = pd.DataFrame([
@@ -211,19 +211,23 @@ def process_zhidongli_data(datas: pd.DataFrame) -> pd.DataFrame:
         # 数据映射和重命名
         column_mapping = {
             '订单号': '订单号',
-            '批次号': '智动力编码', # 假设批次号对应智动力编码
+            '料号': '智动力编码',   # 客户物料编码在“料号”（FEntrySelfS0258）；“批次号”通常为空
             '物料名称': '品名',
             '数量': '数量',
-            '备注': '生产日期' # 假设备注对应生产日期，需要进一步确认逻辑
+            '批号': '批号',
+            '备注': '备注',
         }
         newdatas.rename(columns=column_mapping, inplace=True)
         
         newdatas['数量'] = newdatas['数量'].apply(lambda x: round(float(x), 2))
-        # 生产日期可能需要更复杂的解析，这里假设备注中包含日期信息
-        # newdatas['生产日期'] = pd.to_datetime(newdatas['生产日期'], errors='coerce').dt.date
+
+        # 生产日期暂无可靠取值规则（待业务确认），打印时由模板手工填写；
+        # 此处留空列，保持模板/调用方字段稳定
+        newdatas['生产日期'] = ''
         
         # 重新排列顺序
-        return newdatas.loc[:, ['订单号', '智动力编码', '品名', '宽', '长', '厚', '支', '数量', '生产日期']]
+        return newdatas.loc[:, ['订单号', '智动力编码', '品名', '宽', '长', '厚', '支',
+                               '数量', '批号', '生产日期', '备注']]
     except Exception as e:
         logger.error(f"智动力数据处理错误: {str(e)}", exc_info=True)
         raise

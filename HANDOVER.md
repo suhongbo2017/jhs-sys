@@ -80,11 +80,9 @@ manage.bat             # PM2 管理菜单（启动/停止/日志/开机自启）
 7. **Docker 修复** → ODBC 驱动自适应（优先 Driver 18/17，Windows 回退 `SQL Server`，行为不变）；`Dockerfile` 改 `pip install .`；新增 `.env` + 零依赖加载器（SECRET_KEY 固定，不再重启丢 flash）
 8. **Git 卫生** → `logs/app.log`、`__pycache__/*.pyc` 已 `git rm --cached`
 
-### ⚠️ 未提交！
-上述改动（9 个修改 + 6 个新静态文件 + 3 个索引删除）**尚未 commit**，接手第一件事：
-```bash
-git add -A && git commit -m "fix(P0/P1): 空单号500/XSS/日志UTF-8；CDN本地化、依赖统一、Docker驱动、.env加载"
-```
+### ✅ 已提交
+上述改动已在 `46292bf` 提交（后续 `e08a288` UI 重构、`a4af570` PDF 翻译、`7a4c2e6`/`7d5ac31` PDF 自包含 HTML、
+`5706916` tests/ 测试套件）。工作区应保持干净，接手先看 `AGENTS.md`。
 
 ### 有意不做的事（决策记录）
 - **数据库密码硬编码 `server_connect.py`（`Jhs16888`）+ sa 账号**：业务确认内网使用，暂不改。但注意：密码已进 Git 历史且 README 指向公开 GitHub 仓库，**若仓库公开/泄露，必须改 sa 密码**（改密后同步 `.env`）。代码已支持 `DB_PASSWORD` 环境变量覆盖。
@@ -93,11 +91,15 @@ git add -A && git commit -m "fix(P0/P1): 空单号500/XSS/日志UTF-8；CDN本�
 
 ```bash
 cd /d/VSCODE/PYTHON3/system
+# 一键测试套件（49 例，不连库不花钱；真连库用例需 RUN_LIVE_DB=1）
+.venv/Scripts/python.exe -m unittest discover -s tests -t . -v
+
+# 最小冒烟
 .venv/Scripts/python.exe -c "
 import sys,werkzeug;sys.path.insert(0,'.'); werkzeug.__version__='3.1.3'
 import new_main
 c=new_main.app.test_client()
-routes=['/','/qrcode','/date_tag/','/date_tag_view','/bartender_tag/','/queryMaterial','/LSMqueryMaterial','/translate','/yunHaiPrint','/jinLiPrint','/jiuMaoPrint','/qianJi','/tongtaiying','/fengzhenchang','/fengzhenchang_copy','/zhidongli']
+routes=['/','/qrcode','/date_tag/','/date_tag_view','/bartender_tag/','/queryMaterial','/LSMqueryMaterial','/pdf_translate','/yunHaiPrint','/jinLiPrint','/jiuMaoPrint','/qianJi','/tongtaiying','/fengzhenchang','/fengzhenchang_copy','/zhidongli']
 print({p: c.get(p).status_code for p in routes})
 "
 ```
@@ -106,12 +108,13 @@ print({p: c.get(p).status_code for p in routes})
 ## 6. 已知问题与待办（P2，按优先级）
 
 1. **生产副本漂移**：`C:\Users\Administrator\pi-cwd-20260603\system` 是旧快照（停在 2026-05-09 的 bc387a9）。确认生产实际运行目录，旧副本应删除或拉齐，否则"改了代码没生效"的事故会重演
-2. **模板布局两套写法**：14 个模板用 `{% include 'base.html' %}`（输出两套 `<html>`），只有 `qrcode.html`/`date_tag_view.html` 用正规 `{% extends %}` —— 后续改版建议统一
-3. **打印模板字体未统一**：`jiuMaoPrint.html:41` 仍 SimSun，`jinLiPrint.html` 无 font-family（上次"统一 YaHei"未覆盖）
-4. **无测试/CI**：§5 冒烟脚本可固化为 pytest；`server_connect.py` 的聚合后处理是纯函数，适合单测
-5. **死文件清理**：`5s.html`、`2024-01-02.html`(5907行)、`Scheduled_Tasks.html`、`query_seorder.html`、`qianJi222.html`、`testNav.html` 无路由引用；`write_mysql.py` 的 `if_exists='replace'` 会删表重建，启用前务必确认
+2. ~~模板布局两套写法~~：已在 `e08a288` 统一为 `{% extends "base.html" %}`
+3. **打印模板字体未统一**：`jiuMaoPrint.html:41` 仍 SimSun，`jinLiPrint.html` 无 font-family（需业务确认是否改字，改前真机打印核对）
+4. **无 CI**：`tests/` 已落地 49 例（stdlib unittest，见 `tests/README.md`），可接 GitHub Actions 跑非 DB 用例
+5. **死文件清理**：`5s.html`、`2024-01-02.html`、`Scheduled_Tasks.html`、`query_seorder.html`、`qianJi222.html`、`testNav.html` 已在 `5706916` 删除；`write_mysql.py` 的 `if_exists='replace'` 会删表重建，启用前务必确认
 6. **性能**：每单号新建数据库连接（无池），多单号循环 N 次；可加 3~5 连接小池 + 表头明细合并为一条 JOIN SQL
-7. **智动力"生产日期"解析**：`new_main.py:_parse_spec_string` 相关注释掉的猜测逻辑，需向使用方确认规则
+7. **智动力模板字段**：已用真实单号确认 智动力编码=料号（`FEntrySelfS0258`）、批次号=批号（`FEntrySelfS0248`）；
+   “生产日期”暂无可验证来源，`process_zhidongli_data` 输出空列，打印时由模板手工填写，待业务给规则
 8. **`fengzhenchang_copy`** 与 `fengzhenchang` 是同客户两版本，需定夺
 
 ## 7. 坑与注意事项

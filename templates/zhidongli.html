@@ -142,15 +142,15 @@
                     {% for row in tables %}
                     <tr>
                         <td>{{ row['订单号'] }}</td>
-                        <td>{{ row['料号'] }}</td>
-                        <td>{{ row['物料名称'] }}</td>
+                        <td>{{ row['智动力编码'] }}</td>
+                        <td>{{ row['品名'] }}</td>
                         <td>{{ row['宽'] }}</td>
                         <td>{{ row['长'] }}</td>
-                        <td>-</td>
+                        <td>{{ row['厚'] }}</td>
                         <td>-</td>
                         <td>{{ row['数量'] }}</td>
-                        <td>{{ row['批次号'] }}</td>
-                        <td><input type="text" class="info-input" style="text-align: center" placeholder="日期"></td>
+                        <td>{{ row['批号'] }}</td>
+                        <td><input type="text" class="info-input" style="text-align: center" placeholder="日期" value="{{ row['生产日期'] }}"></td>
                         <td>{{ row['备注'] }}</td>
                     </tr>
                     {% endfor %}

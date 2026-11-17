@@ -82,7 +82,7 @@ class ParseSpecStringTest(unittest.TestCase):
 class ProcessZhidongliDataTest(unittest.TestCase):
     def _df(self):
         return pd.DataFrame([{
-            '订单号': 'PO1', '批次号': 'B1', '物料名称': '隔膜',
+            '订单号': 'PO1', '料号': 'FC-0832', '物料名称': '隔膜', '批号': '12N2606162207',
             '数量': '3.14159', '整支规格': '1.2*200*300*4', '备注': '2026-01-01',
         }])
 
@@ -90,11 +90,14 @@ class ProcessZhidongliDataTest(unittest.TestCase):
         out = new_main.process_zhidongli_data(self._df())
         self.assertEqual(
             list(out.columns),
-            ['订单号', '智动力编码', '品名', '宽', '长', '厚', '支', '数量', '生产日期'],
+            ['订单号', '智动力编码', '品名', '宽', '长', '厚', '支',
+             '数量', '批号', '生产日期', '备注'],
         )
         self.assertEqual(out.iloc[0]['数量'], 3.14)
         self.assertEqual(out.iloc[0]['宽'], 200.0)
-        self.assertEqual(out.iloc[0]['智动力编码'], 'B1')
+        self.assertEqual(out.iloc[0]['智动力编码'], 'FC-0832')
+        self.assertEqual(out.iloc[0]['批号'], '12N2606162207')
+        self.assertEqual(out.iloc[0]['生产日期'], '')  # 待业务确认，模板手工填写
 
 
 class ProcessMaterialQueryTest(unittest.TestCase):

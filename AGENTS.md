@@ -385,6 +385,6 @@ print(df.shape, sc.queryMaterial('240').shape, sc.LSMqueryMaterial('胶').shape)
 3. CI：可把 `tests/` 接到 GitHub Actions（仅跑非 DB 用例），当前靠手工 `python -m unittest discover`
 4. `fengzhenchang_copy` 与 `fengzhenchang` 需定夺保留哪个
 5. 性能：数据库连接池（现每次新建）+ 表头/明细合并为一条 JOIN
-6. `zhidongli` 的"生产日期"取值规则仍是猜测（`_parse_spec_string` 附近），需业务确认
+6. `zhidongli` 的“生产日期”暂无人可验证的取值来源：`process_zhidongli_data` 输出空列，模板以手工输入框承接，待业务确认规则后可改为自动取值（另：已用真实数据确认 智动力编码=料号 `FEntrySelfS0258`、批次号=批号 `FEntrySelfS0248`）
 
 **不可回退的既有事实**：无鉴权（内网单机）、SQL Server 用 sa、任务状态不持久化、PDF 翻译依赖外部大模型 Key（无 Key 时页面可用但真实翻译会失败，演练模式不受影响）。
