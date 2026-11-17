@@ -27,6 +27,7 @@ os.environ.setdefault('JHS_TEST', '1')
 import pandas as pd  # noqa: E402
 
 import new_main  # noqa: E402
+import pdf_translate_jobs  # noqa: E402
 import server_connect  # noqa: E402
 
 app = new_main.app
@@ -76,3 +77,33 @@ def make_sample_pdf(text: str = 'Test Page') -> bytes:
     data = doc.tobytes()
     doc.close()
     return data
+
+def cleanup_job(job_id: str) -> None:
+    """删除测试创建的 PDF 任务（内存条目 + 磁盘目录），避免污染生产 uploads/。"""
+    import shutil
+
+    workdir = pdf_translate_jobs.job_dir(job_id)
+    with pdf_translate_jobs._lock:
+        pdf_translate_jobs._jobs.pop(job_id, None)
+    if workdir:
+        shutil.rmtree(workdir, ignore_errors=True)
+
+
+def register_fake_job() -> str:
+    """注册一个已完成的任务（不启动线程），用于下载/路径穿越类测试。"""
+    import time
+    import uuid
+
+    job_id = 'test-' + uuid.uuid4().hex[:8]
+    workdir = pdf_translate_jobs.WORK_ROOT / job_id
+    out_dir = workdir / 'out'
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / 'result.txt').write_text('ok', encoding='utf-8')
+    with pdf_translate_jobs._lock:
+        pdf_translate_jobs._jobs[job_id] = {
+            'id': job_id, 'workdir': str(workdir), 'status': 'done', 'progress': 100,
+            'done_pages': 1, 'total_pages': 1, 'logs': [], 'files': [], 'outputs': [],
+            'error': '', 'started': 0.0, 'created_ts': time.time(),
+            'created_label': '', 'model': 'mock', 'mock': True,
+        }
+    return job_id

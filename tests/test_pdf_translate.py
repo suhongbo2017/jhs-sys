@@ -59,11 +59,15 @@ class PdfJobAccessTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 302)
 
     def test_download_path_traversal_blocked(self):
-        job_id, err = pdf_translate_jobs.create_job(
-            files=[('a.pdf', support.make_sample_pdf())],
-            model_id=pdf_translate_jobs.default_model(), mock=True,
-        )
-        self.assertIsNone(err, err)
+        job_id = support.register_fake_job()
+        self.addCleanup(support.cleanup_job, job_id)
+
+        # 正向对照：任务目录内的文件应能正常下载
+        ok = self.client.get(f'/pdf_translate/download/{job_id}/result.txt')
+        self.assertEqual(ok.status_code, 200)
+        self.assertEqual(ok.data, b'ok')
+        ok.close()
+
         for name in ['../../../../Windows/win.ini', '..%2f..%2fetc%2fpasswd', '../in/a.pdf']:
             resp = self.client.get(f'/pdf_translate/download/{job_id}/{name}')
             self.assertIn(resp.status_code, (302, 404), f'{name} 未被拦截')
@@ -97,6 +101,7 @@ class PdfMockPipelineTest(unittest.TestCase):
 
         job_id = parse_qs(urlparse(location).query).get('job', [''])[0]
         self.assertTrue(job_id, location)
+        self.addCleanup(support.cleanup_job, job_id)
 
         deadline = time.time() + 120
         job = None
