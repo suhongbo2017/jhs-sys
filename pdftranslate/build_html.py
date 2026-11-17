@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import html
 import io
 import json
@@ -34,6 +35,8 @@ toolbar, .toolbar {
   box-shadow: 0 6px 24px rgba(0,0,0,.45); overflow: hidden;
   width: min(1000px, 96vw);
 }
+/* 底图缺失（如只保存了 index.html）时仍保留页面高度，避免译文块堆到顶部 */
+.page[style*="aspect-ratio"] { min-height: 120px; }
 .page > img.bg { display: block; width: 100%; height: auto; opacity: var(--bg-opacity); transition: opacity .15s; }
 .layer { position: absolute; inset: 0; }
 .blk {
@@ -133,6 +136,15 @@ def _page_image(png: bytes, max_width: int = 1400, quality: int = 82) -> bytes:
     buf = io.BytesIO()
     img.save(buf, format='JPEG', quality=quality, optimize=True)
     return buf.getvalue()
+
+
+def _aspect_ratio(png: bytes) -> float | None:
+    """页面宽高比，用于底图缺失时保持页面高度。"""
+    try:
+        img = Image.open(io.BytesIO(png))
+        return img.width / img.height if img.height else None
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def _col_widths(rows: list[list[str]]) -> list[float]:
@@ -237,11 +249,17 @@ def build_html(
     source: str,
     out_dir: Path,
     title: str | None = None,
+    inline_images: bool = True,
 ) -> Path:
-    """page_images: [(页码, 整页PNG)]；写出 out_dir/index.html + assets/"""
+    """page_images: [(页码, 整页PNG)]；写出 out_dir/index.html
+
+    inline_images=True 时把底图以 base64 内联，**单个 index.html 即可完整查看**
+    （否则译文块依赖同目录 assets/，用户只保存 html 时页面高度会塌陷、译文挤成一团）。
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
     assets = out_dir / 'assets'
-    assets.mkdir(exist_ok=True)
+    if not inline_images:
+        assets.mkdir(exist_ok=True)
 
     by_page = {r.page: r for r in results}
     flow_pages: list[int] = []
@@ -250,7 +268,14 @@ def build_html(
 
     for index, png in page_images:
         name = f'page-{index:03d}.jpg'
-        (assets / name).write_bytes(_page_image(png))
+        jpg = _page_image(png)
+        ratio = _aspect_ratio(png)
+        ratio_attr = f' style="aspect-ratio:{ratio:.4f}"' if ratio else ''
+        if inline_images:
+            src_attr = 'data:image/jpeg;base64,' + base64.b64encode(jpg).decode('ascii')
+        else:
+            (assets / name).write_bytes(jpg)
+            src_attr = f'assets/{name}'
         result = by_page.get(index)
         blocks = result.blocks if result else []
         # 以页面显示宽度 ~1000px 估算基础字号：11pt/595pt ≈ 1.85% 页宽
@@ -272,8 +297,8 @@ def build_html(
                     continue
                 rows.append(f'<div class="flow-item"><div class="zh">{zh}</div><div class="en">{en}</div></div>')
             sections.append(
-                f'<section class="page flow-page" data-page="{index}">'
-                f'<img class="bg" src="assets/{name}" alt="第 {index} 页">'
+                f'<section class="page flow-page" data-page="{index}"{ratio_attr}>'
+                f'<img class="bg" src="{src_attr}" alt="第 {index} 页">'
                 f'<div class="flow"><div class="flow-note">本页坐标不可靠（{detail}），已改为顺排</div>{"".join(rows)}</div>'
                 f'</section>'
             )
@@ -296,8 +321,8 @@ def build_html(
         if result and result.uncertain:
             note = ' · 存疑 ' + str(len(result.uncertain))
         sections.append(
-            f'<section class="page" data-page="{index}">'
-            f'<img class="bg" src="assets/{name}" alt="第 {index} 页">'
+            f'<section class="page" data-page="{index}"{ratio_attr}>'
+            f'<img class="bg" src="{src_attr}" alt="第 {index} 页">'
             f'<div class="layer">{blk_html}</div></section>'
             f'<!-- page {index} · {len(blocks)} 块{note} -->'
         )
