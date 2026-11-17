@@ -174,6 +174,9 @@ def _query_entry(cursor, finter_id: int, code_name: int) -> pd.DataFrame:
         df = config.post_process(df)
 
     df.reset_index(drop=False, inplace=True)
+    # reset_index 生成的列默认叫 'index'，统一命名为 'ID'（模板里 i['ID'] 显示行号的前提）
+    if 'index' in df.columns and 'ID' not in df.columns:
+        df.rename(columns={'index': 'ID'}, inplace=True)
     df.index.name = 'ID'
     return df
 

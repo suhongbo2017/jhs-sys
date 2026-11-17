@@ -4,6 +4,7 @@ from logging.handlers import RotatingFileHandler
 from flask import (Flask, render_template, request, flash, send_from_directory,
                    redirect, url_for, jsonify)
 from flask_bootstrap import Bootstrap4
+from werkzeug.exceptions import HTTPException
 import server_connect
 import pdf_translate_jobs
 import pandas as pd
@@ -62,6 +63,11 @@ def create_app():
     def not_found(e):
         return render_template('error.html', error='页面未找到 (404)'), 404
 
+    @app.errorhandler(413)
+    def payload_too_large(e):
+        logger.warning('上传内容超过大小限制')
+        return render_template('error.html', error='上传内容过大（单次总上限 100MB），请拆分成多个文件'), 413
+
     @app.errorhandler(500)
     def server_error(e):
         logger.error(f"服务器内部错误: {e}", exc_info=True)
@@ -77,6 +83,10 @@ def handle_errors(f):
     def decorated_function(*args, **kwargs):
         try:
             return f(*args, **kwargs)
+        except HTTPException:
+            # 413/404 等交给 Flask 的 errorhandler 处理（保留状态码与友好文案），
+            # 否则会被当成普通异常渲染成 200 的通用错误页
+            raise
         except Exception as e:
             logger.error(f"Error in {f.__name__}: {str(e)}", exc_info=True)
             flash('操作出错，详情请查看服务日志', "error")
@@ -93,8 +103,11 @@ def process_delivery_data(data: str, code_name: int) -> Tuple[Optional[pd.DataFr
         return None, None
     
     data = data.upper()
-    seout_id = data
-    data_list = data.split('/')
+    # 容忍用户从文档粘贴带来的空格/换行/多斜杠：“ JHS1 / JHS2 ” → ['JHS1','JHS2']
+    data_list = [p.strip() for p in data.split('/') if p.strip()]
+    if not data_list:
+        return None, None
+    seout_id = '/'.join(data_list)   # 回显给打印模板的是清洗后的单号
     logger.info(f"格式化输入单号：{data_list}")
     
     try:
@@ -253,19 +266,24 @@ def zhidongli():
 
 # 物料查询处理函数
 def process_material_query(q_data: str, query_func) -> Tuple[Optional[pd.DataFrame], str]:
+    q_data = (q_data or '').strip()
     if '/' in q_data:
-        conditions = q_data.split('/')
-        if len(conditions) != 2:
+        conditions = [c.strip() for c in q_data.split('/')]
+        if len(conditions) != 2 or not all(conditions):
             raise ValueError("查询格式错误：请使用'/'分隔两个查询条件")
             
         datas = query_func(conditions[0])
         if datas.empty:
             return pd.DataFrame(), "多条件查询" # 返回空 DataFrame
         
-        result = datas.loc[
-            (datas['物料名称'].str.contains(conditions[1], na=False)) |
-            (datas['规格型号'].str.contains(conditions[1], na=False))
-        ]
+        # regex=False：用户输入按字面量匹配，避免 "20*"、"(" 之类被当正则（误匹配或抛错）
+        # 第二个条件与页面文案对齐：名称 / 规格 / 代码（旧代码只比名称与规格，搜代码会查不到）
+        pattern = conditions[1]
+        mask = pd.Series(False, index=datas.index)
+        for col in ('物料名称', '规格型号', '物料代码', '短代码'):
+            if col in datas.columns:
+                mask |= datas[col].astype(str).str.contains(pattern, na=False, regex=False)
+        result = datas.loc[mask]
         return result, "多条件查询"
     else:
         return query_func(q_data), "单条件查询"

@@ -66,7 +66,13 @@
             document.getElementById('creator-ui').classList.add('d-none');
             document.getElementById('confirm-ui').classList.remove('d-none');
 
-            const decodedData = decodeURIComponent(rawData);
+            // URLSearchParams 已经做过一次百分号解码，这里再解一次会把 "100%25" → "100%" 解成非法序列并抛 URIError
+            let decodedData = rawData;
+            try {
+                decodedData = decodeURIComponent(rawData);
+            } catch (e) {
+                decodedData = rawData;   // 含孤立 '%' 等非法序列时回退到原始值，不让页面崩掉
+            }
             const displayElement = document.getElementById('target-display');
             const actionBtn = document.getElementById('action-btn');
 

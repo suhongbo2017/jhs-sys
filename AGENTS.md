@@ -266,7 +266,14 @@ body
 
 ## 11. 测试与验证
 
-### 11.1 全页面冒烟（改完必跑）
+### 11.0 一键测试套件（改完首选）
+```bash
+.venv/Scripts/python.exe -m unittest discover -s tests -t . -v   # 44 例，约 4s，不连库不花钱
+```
+覆盖：全路由 200 / 打印各分支 / 数据层纯逻辑 / PDF 上传与 mock 全流程 / 无外网 CDN。
+明细与扩展约定见 `tests/README.md`；真连库用例需 `RUN_LIVE_DB=1`。
+
+### 11.1 全页面冒烟（无测试环境时的最小验证）
 ```python
 import sys, werkzeug; sys.path.insert(0,'.'); werkzeug.__version__='3.1.3'
 import logging; logging.disable(logging.CRITICAL)
@@ -369,12 +376,14 @@ print(df.shape, sc.queryMaterial('240').shape, sc.LSMqueryMaterial('胶').shape)
 1. `46292bf` P0/P1 修复：空单号 500、qrcode XSS、异常信息不外泄、日志 UTF-8、CDN 本地化、依赖统一、Docker 驱动、`.env` 加载、Git 卫生
 2. `e08a288` UI 视觉系统重构 `theme.css` + app-shell + 带文字侧栏 + 各页重做 + include→extends
 3. `a4af570` / `7a4c2e6` PDF 翻译接入（替换 DeepLX）、`manage.bat` 环境自检与 PM2 自动安装
+4. （本次）`tests/` 自动化测试套件落地（47 例，stdlib unittest，不连库不花钱；真连库 3 例需 `RUN_LIVE_DB=1`，已用 JHS0282102 验证 6 个 codeName 全通）；修多条件物料查询把用户输入当正则（`20*` 误匹配、`(` 抛错）、第二个条件补上代码列、单号/查询条件空格容错、超限上传走中文 413 页、`_query_entry` 行号列真正叫 `ID`
+5. （本次）删除 6 个无引用死模板：`5s.html`、`2024-01-02.html`、`Scheduled_Tasks.html`、`query_seorder.html`、`qianJi222.html`、`testNav.html`
 
 **待办（按优先级）**
 1. `C:\Users\Administrator\pi-cwd-20260603\system` 旧副本确认并清理，避免"改了不生效"
-2. 打印模板字体未完全统一：`jiuMaoPrint.html` 仍 `SimSun`，`jinLiPrint.html` 无 `font-family`
-3. 无自动化测试与 CI：把 §11 的冒烟/数据层/PDF mock 固化成 `tests/`（DB 用例按内网环境 skip）
-4. 死模板可删：`5s.html`、`2024-01-02.html`(5907 行)、`Scheduled_Tasks.html`、`query_seorder.html`、`qianJi222.html`、`testNav.html`；`fengzhenchang_copy` 与 `fengzhenchang` 需定夺保留
+2. 打印模板字体未完全统一：`jiuMaoPrint.html` 仍 `SimSun`，`jinLiPrint.html` 无 `font-family`（需业务确认是否改字，改前真机打印核对）
+3. CI：可把 `tests/` 接到 GitHub Actions（仅跑非 DB 用例），当前靠手工 `python -m unittest discover`
+4. `fengzhenchang_copy` 与 `fengzhenchang` 需定夺保留哪个
 5. 性能：数据库连接池（现每次新建）+ 表头/明细合并为一条 JOIN
 6. `zhidongli` 的"生产日期"取值规则仍是猜测（`_parse_spec_string` 附近），需业务确认
 
